@@ -261,6 +261,10 @@
 			mob.adjust_stamina(-(mob.get_stamina_used_per_step() * (1+mob.encumbrance())))
 		mob.handle_embedded_and_stomach_objects()
 
+	var/mob/living/carbon/human/h = mover
+	if(IS_SELF(mover))
+		h.handle_exertion()
+		
 	mob.moving = 0
 
 /datum/movement_handler/mob/movement/MayMove(var/mob/mover)
