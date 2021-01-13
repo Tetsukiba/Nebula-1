@@ -139,8 +139,7 @@
 		if(client)
 			var/turf/B = GetAbove(src)
 			up_hint.icon_state = "uphint[(B ? B.is_open() : 0)]"
-			
-//below is handled in code\datums\movement\mob.dm:264
+
 /mob/living/carbon/human/proc/handle_leg_damage()
 	if(!can_feel_pain())
 		return
