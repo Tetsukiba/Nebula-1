@@ -1,3 +1,5 @@
+var/global/list/hygiene_props = list()
+
 //todo: toothbrushes, and some sort of "toilet-filthinator" for the hos
 /obj/structure/hygiene
 	var/next_gurgle = 0
@@ -8,11 +10,11 @@
 
 /obj/structure/hygiene/Initialize()
 	. = ..()
-	SSfluids.hygiene_props += src
+	global.hygiene_props += src
 	START_PROCESSING(SSobj, src)
 
 /obj/structure/hygiene/Destroy()
-	SSfluids.hygiene_props -= src
+	global.hygiene_props -= src
 	STOP_PROCESSING(SSobj, src)
 	. = ..()
 
@@ -112,7 +114,7 @@
 	open = round(rand(0, 1))
 	update_icon()
 
-/obj/structure/hygiene/toilet/attack_hand(var/mob/living/user)
+/obj/structure/hygiene/toilet/attack_hand(var/mob/user)
 	if(swirlie)
 		usr.visible_message(
 			"<span class='danger'>[user] slams the toilet seat onto [swirlie.name]'s head!</span>",
@@ -140,7 +142,7 @@
 /obj/structure/hygiene/toilet/on_update_icon()
 	icon_state = "toilet[open][cistern]"
 
-/obj/structure/hygiene/toilet/attackby(obj/item/I, var/mob/living/user)
+/obj/structure/hygiene/toilet/attackby(obj/item/I, var/mob/user)
 	if(isCrowbar(I))
 		to_chat(user, "<span class='notice'>You start to [cistern ? "replace the lid on the cistern" : "lift the lid off the cistern"].</span>")
 		playsound(loc, 'sound/effects/stonedoor_openclose.ogg', 50, 1)
@@ -264,7 +266,7 @@
 	playsound(src, on ? 'sound/effects/shower_start.ogg' : 'sound/effects/shower_end.ogg', 40)
 	QDEL_NULL(sound_token)
 	if(on)
-		sound_token = GLOB.sound_player.PlayLoopingSound(src, sound_id, 'sound/effects/shower_mid3.ogg', volume = 20, range = 7, falloff = 4, prefer_mute = TRUE)
+		sound_token = play_looping_sound(src, sound_id, 'sound/effects/shower_mid3.ogg', volume = 20, range = 7, falloff = 4, prefer_mute = TRUE)
 
 /obj/effect/mist
 	name = "mist"
@@ -348,9 +350,7 @@
 	if(!ismist && is_washing)
 		return
 	is_washing = 1
-	var/turf/T = get_turf(src)
-	reagents.splash(T, reagents.total_volume)
-	T.clean(src)
+	reagents.splash(get_turf(src), reagents.total_volume)
 	spawn(100)
 		is_washing = 0
 
@@ -386,19 +386,17 @@
 /obj/structure/hygiene/sink/is_pressurized_fluid_source()
 	return TRUE
 
-/obj/structure/hygiene/sink/MouseDrop_T(var/obj/item/thing, var/mob/user)
-	..()
-	if(!istype(thing) || !ATOM_IS_OPEN_CONTAINER(thing))
-		return ..()
-	if(!usr.Adjacent(src))
-		return ..()
-	if(!thing.reagents || thing.reagents.total_volume == 0)
-		to_chat(usr, "<span class='warning'>\The [thing] is empty.</span>")
-		return
-	// Clear the vessel.
-	visible_message("<span class='notice'>\The [usr] tips the contents of \the [thing] into \the [src].</span>")
-	thing.reagents.clear_reagents()
-	thing.update_icon()
+/obj/structure/hygiene/sink/receive_mouse_drop(var/atom/dropping, var/mob/user)
+	. = ..()
+	if(!. && isitem(dropping) && ATOM_IS_OPEN_CONTAINER(dropping))
+		var/obj/item/thing = dropping
+		if(thing.reagents?.total_volume <= 0)
+			to_chat(usr, SPAN_WARNING("\The [thing] is empty."))
+		else
+			visible_message(SPAN_NOTICE("\The [user] tips the contents of \the [thing] into \the [src]."))
+			thing.reagents.clear_reagents()
+			thing.update_icon()
+		return TRUE
 
 /obj/structure/hygiene/sink/attack_hand(var/mob/user)
 	if (ishuman(user))
@@ -433,7 +431,7 @@
 		"<span class='notice'>You wash your hands using \the [src].</span>")
 
 
-/obj/structure/hygiene/sink/attackby(obj/item/O, var/mob/living/user)
+/obj/structure/hygiene/sink/attackby(obj/item/O, var/mob/user)
 	if(isplunger(O) && clogged > 0)
 		return ..()
 
@@ -453,22 +451,28 @@
 		if(B.bcell)
 			if(B.bcell.charge > 0 && B.status == 1)
 				flick("baton_active", src)
-				user.Stun(10)
-				user.stuttering = 10
-				user.Weaken(10)
+				if(isliving(user))
+					var/mob/living/M = user
+					SET_STATUS_MAX(M, STAT_STUN, 10)
+					SET_STATUS_MAX(M, STAT_STUTTER, 10)
+					SET_STATUS_MAX(M, STAT_WEAK, 10)
 				if(isrobot(user))
 					var/mob/living/silicon/robot/R = user
 					R.cell.charge -= 20
 				else
 					B.deductcharge(B.hitcost)
+				var/decl/pronouns/G = user.get_pronouns()
 				user.visible_message( \
-					"<span class='danger'>[user] was stunned by \his wet [O]!</span>", \
-					"<span class='userdanger'>[user] was stunned by \his wet [O]!</span>")
+					"<span class='danger'>[user] was stunned by [G.his] wet [O]!</span>", \
+					"<span class='userdanger'>[user] was stunned by [G.his] wet [O]!</span>")
 				return 1
 	else if(istype(O, /obj/item/mop))
-		O.reagents.add_reagent(/decl/material/liquid/water, 5)
-		to_chat(user, "<span class='notice'>You wet \the [O] in \the [src].</span>")
-		playsound(loc, 'sound/effects/slosh.ogg', 25, 1)
+		if(REAGENTS_FREE_SPACE(O.reagents) >= 5)
+			O.reagents.add_reagent(/decl/material/liquid/water, 5)
+			to_chat(user, SPAN_NOTICE("You wet \the [O] in \the [src]."))
+			playsound(loc, 'sound/effects/slosh.ogg', 25, 1)
+		else
+			to_chat(user, SPAN_WARNING("\The [O] is saturated."))
 		return
 
 	var/turf/location = user.loc

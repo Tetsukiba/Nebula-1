@@ -2012,7 +2012,7 @@
 /area/lar_maria/sec_wing)
 "fm" = (
 /obj/structure/table/steel_reinforced,
-/obj/item/clothing/head/soft/lar_maria/zhp_cap,
+/obj/item/clothing/head/soft/zhp_cap,
 /turf/simulated/floor/tiled,
 /area/lar_maria/sec_wing)
 "fn" = (
@@ -2681,7 +2681,7 @@
 "gt" = (
 /obj/structure/closet/crate/radiation,
 /obj/item/stack/cable_coil/random,
-/obj/item/stack/material/tritium/ten,
+/obj/item/stack/material/aerogel/mapped/tritium/ten,
 /obj/item/wirecutters,
 /obj/item/wrench,
 /turf/simulated/floor/plating,
@@ -2974,7 +2974,7 @@
 /area/lar_maria/vir_access)
 "hh" = (
 /obj/structure/closet,
-/obj/item/clothing/head/soft/lar_maria/zhp_cap,
+/obj/item/clothing/head/soft/zhp_cap,
 /turf/simulated/floor/tiled,
 /area/lar_maria/vir_access)
 "hi" = (

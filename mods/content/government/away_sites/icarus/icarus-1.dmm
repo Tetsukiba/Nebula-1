@@ -9,10 +9,10 @@
 /turf/exterior/wildgrass,
 /area/icarus/open)
 "ae" = (
-/turf/simulated/wall/natural,
+/turf/exterior/wall,
 /area/icarus/open)
 "af" = (
-/turf/simulated/wall/natural,
+/turf/exterior/wall,
 /area/icarus/vessel)
 "ag" = (
 /obj/structure/grille,
@@ -737,7 +737,7 @@
 "cD" = (
 /obj/structure/closet,
 /obj/random/smokes,
-/obj/item/clothing/under/icarus/ec_uniform,
+/obj/item/clothing/under/ec_uniform,
 /turf/simulated/floor/tiled,
 /area/icarus/vessel)
 "cE" = (
@@ -771,7 +771,7 @@
 /area/icarus/vessel)
 "cJ" = (
 /obj/structure/closet,
-/obj/item/clothing/under/icarus/ec_uniform,
+/obj/item/clothing/under/ec_uniform,
 /turf/simulated/floor/tiled,
 /area/icarus/vessel)
 "cK" = (
@@ -889,7 +889,7 @@
 "db" = (
 /obj/structure/closet,
 /obj/random/drinkbottle,
-/obj/item/clothing/under/icarus/ec_uniform,
+/obj/item/clothing/under/ec_uniform,
 /turf/simulated/floor/tiled,
 /area/icarus/vessel)
 "dc" = (
@@ -1021,7 +1021,7 @@
 "dx" = (
 /obj/structure/closet,
 /obj/random/shoes,
-/obj/item/clothing/under/icarus/ec_uniform,
+/obj/item/clothing/under/ec_uniform,
 /turf/simulated/floor/tiled,
 /area/icarus/vessel)
 "dy" = (
@@ -2207,7 +2207,6 @@
 /area/icarus/vessel)
 "hg" = (
 /obj/machinery/atmospherics/pipe/simple/visible/yellow{
-	icon_state = "intact";
 	dir = 5
 	},
 /turf/simulated/floor/plating,
@@ -2243,7 +2242,6 @@
 /area/icarus/vessel)
 "hn" = (
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 5
 	},
 /turf/simulated/floor/plating,
@@ -2264,8 +2262,7 @@
 	},
 /obj/structure/grille,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	dir = 4;
-	icon_state = "intact"
+	dir = 4
 	},
 /turf/simulated/floor/reinforced,
 /area/icarus/vessel)
@@ -2293,7 +2290,6 @@
 /area/icarus/vessel)
 "hs" = (
 /obj/machinery/atmospherics/pipe/simple/visible/green{
-	icon_state = "intact";
 	dir = 4
 	},
 /turf/simulated/floor/plating,
@@ -2342,7 +2338,6 @@
 /area/icarus/vessel)
 "hz" = (
 /obj/machinery/atmospherics/pipe/simple/visible/blue{
-	icon_state = "intact";
 	dir = 5
 	},
 /turf/simulated/floor/plating,

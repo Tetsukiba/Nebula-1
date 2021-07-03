@@ -57,7 +57,7 @@
 	cut_overlays()
 	if(status)
 		add_overlay("[icon_state]-active")
-		set_light(0.4, 0.1, 1, 2, "#ff6a00")
+		set_light(1.5, 2, "#ff6a00")
 	else
 		if(!bcell)
 			add_overlay("[icon_state]-nocell")
@@ -123,7 +123,7 @@
 /obj/item/baton/attack(mob/M, mob/user)
 	if(status && (MUTATION_CLUMSY in user.mutations) && prob(50))
 		to_chat(user, "<span class='danger'>You accidentally hit yourself with the [src]!</span>")
-		user.Weaken(30)
+		SET_STATUS_MAX(user, STAT_WEAK, 30)
 		deductcharge(hitcost)
 		return
 	return ..()
@@ -171,7 +171,7 @@
 
 		if(ishuman(target))
 			var/mob/living/carbon/human/H = target
-			H.forcesay(GLOB.hit_appends)
+			H.forcesay(global.hit_appends)
 
 	return 1
 
@@ -228,7 +228,7 @@
 /obj/item/baton/robot/electrified_arm/on_update_icon()
 	if(status)
 		icon_state = "electrified_arm_active"
-		set_light(0.4, 0.1, 1, 2, "#006aff")
+		set_light(1.5, 2, "#006aff")
 	else
 		icon_state = "electrified_arm"
 		set_light(0)

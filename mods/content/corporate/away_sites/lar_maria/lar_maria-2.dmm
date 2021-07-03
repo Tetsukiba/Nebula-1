@@ -30,9 +30,7 @@
 	d2 = 2;
 	icon_state = "0-2"
 	},
-/obj/machinery/power/solar{
-	id = "ZHSolarsWest"
-	},
+/obj/machinery/power/solar,
 /turf/simulated/floor/reinforced,
 /area/space)
 "ah" = (
@@ -44,9 +42,7 @@
 	d2 = 2;
 	icon_state = "0-2"
 	},
-/obj/machinery/power/solar{
-	id = "ZHSolarsEast"
-	},
+/obj/machinery/power/solar,
 /turf/simulated/floor/reinforced,
 /area/space)
 "aj" = (
@@ -148,9 +144,7 @@
 "aq" = (
 /obj/effect/floor_decal/solarpanel,
 /obj/structure/cable/yellow,
-/obj/machinery/power/solar{
-	id = "ZHSolarsWest"
-	},
+/obj/machinery/power/solar,
 /turf/simulated/floor/reinforced,
 /area/space)
 "ar" = (
@@ -162,9 +156,7 @@
 /turf/simulated/floor/reinforced,
 /area/space)
 "as" = (
-/obj/machinery/power/solar_control/autostart{
-	id = "ZHSolarsWest"
-	},
+/obj/machinery/power/solar_control/autostart,
 /obj/structure/cable/yellow{
 	d2 = 2;
 	icon_state = "0-2"
@@ -177,7 +169,7 @@
 /area/lar_maria/solar_control)
 "av" = (
 /obj/structure/closet/crate/radiation,
-/obj/item/stack/material/tritium/fifty,
+/obj/item/stack/material/aerogel/mapped/tritium/fifty,
 /obj/item/stack/cable_coil/orange,
 /obj/item/wrench,
 /obj/item/wirecutters,
@@ -195,9 +187,7 @@
 /turf/simulated/floor/plating,
 /area/lar_maria/solar_control)
 "az" = (
-/obj/machinery/power/solar_control/autostart{
-	id = "ZHSolarsEast"
-	},
+/obj/machinery/power/solar_control/autostart,
 /obj/structure/cable/yellow{
 	d2 = 2;
 	icon_state = "0-2"
@@ -207,9 +197,7 @@
 "aA" = (
 /obj/effect/floor_decal/solarpanel,
 /obj/structure/cable/yellow,
-/obj/machinery/power/solar{
-	id = "ZHSolarsEast"
-	},
+/obj/machinery/power/solar,
 /turf/simulated/floor/reinforced,
 /area/space)
 "aB" = (
@@ -493,9 +481,7 @@
 /area/space)
 "aU" = (
 /obj/effect/floor_decal/solarpanel,
-/obj/machinery/power/solar{
-	id = "ZHSolarsWest"
-	},
+/obj/machinery/power/solar,
 /obj/structure/cable/yellow{
 	d2 = 4;
 	icon_state = "0-4"
@@ -522,9 +508,7 @@
 /area/space)
 "aW" = (
 /obj/effect/floor_decal/solarpanel,
-/obj/machinery/power/solar{
-	id = "ZHSolarsWest"
-	},
+/obj/machinery/power/solar,
 /obj/structure/cable/yellow{
 	d2 = 8;
 	icon_state = "0-8"
@@ -583,9 +567,7 @@
 	d2 = 4;
 	icon_state = "0-4"
 	},
-/obj/machinery/power/solar{
-	id = "ZHSolarsEast"
-	},
+/obj/machinery/power/solar,
 /turf/simulated/floor/reinforced,
 /area/space)
 "be" = (
@@ -594,9 +576,7 @@
 	d2 = 8;
 	icon_state = "0-8"
 	},
-/obj/machinery/power/solar{
-	id = "ZHSolarsEast"
-	},
+/obj/machinery/power/solar,
 /turf/simulated/floor/reinforced,
 /area/space)
 "bf" = (
@@ -859,16 +839,14 @@
 /area/lar_maria/atmos)
 "bT" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/cyan{
-	dir = 6;
-	icon_state = "intact"
+	dir = 6
 	},
 /obj/structure/closet/emcloset,
 /turf/simulated/floor/plating,
 /area/lar_maria/atmos)
 "bU" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/cyan{
-	dir = 9;
-	icon_state = "intact"
+	dir = 9
 	},
 /obj/structure/closet/firecloset,
 /turf/simulated/floor/plating,
@@ -937,14 +915,12 @@
 /area/lar_maria/atmos)
 "ci" = (
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	icon_state = "intact";
 	dir = 4
 	},
 /turf/simulated/floor/plating,
 /area/lar_maria/atmos)
 "cj" = (
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	icon_state = "intact";
 	dir = 4
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply,
@@ -957,7 +933,6 @@
 /area/lar_maria/atmos)
 "ck" = (
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	icon_state = "intact";
 	dir = 4
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
@@ -965,7 +940,6 @@
 /area/lar_maria/atmos)
 "cl" = (
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	icon_state = "intact";
 	dir = 10
 	},
 /turf/simulated/floor/plating,
@@ -1125,7 +1099,7 @@
 	dir = 1
 	},
 /obj/structure/table/standard,
-/obj/item/clothing/head/soft/lar_maria/zhp_cap,
+/obj/item/clothing/head/soft/zhp_cap,
 /turf/simulated/floor/tiled,
 /area/lar_maria/library)
 "cO" = (
@@ -1448,8 +1422,7 @@
 /area/lar_maria/atmos)
 "dO" = (
 /obj/machinery/atmospherics/pipe/simple/visible/blue{
-	dir = 5;
-	icon_state = "intact"
+	dir = 5
 	},
 /obj/structure/closet/emcloset,
 /turf/simulated/floor/plating,
@@ -1509,8 +1482,7 @@
 /area/lar_maria/atmos)
 "dT" = (
 /obj/machinery/atmospherics/pipe/simple/visible/blue{
-	dir = 9;
-	icon_state = "intact"
+	dir = 9
 	},
 /turf/simulated/floor/plating,
 /area/lar_maria/atmos)
@@ -1621,7 +1593,7 @@
 /obj/structure/closet,
 /obj/random/loot,
 /obj/random/accessory,
-/obj/item/clothing/head/soft/lar_maria/zhp_cap,
+/obj/item/clothing/head/soft/zhp_cap,
 /turf/simulated/floor/wood,
 /area/lar_maria/dorms)
 "eo" = (
@@ -1898,8 +1870,8 @@
 "fm" = (
 /obj/structure/closet,
 /obj/item/clothing/head/surgery,
-/obj/item/clothing/under/rank/medical/scrubs,
-/obj/item/clothing/under/rank/medical/scrubs,
+/obj/item/clothing/under/medical/scrubs,
+/obj/item/clothing/under/medical/scrubs,
 /obj/item/clothing/suit/storage/toggle/labcoat,
 /obj/item/clothing/suit/storage/toggle/labcoat,
 /obj/random/gloves,
@@ -2049,7 +2021,7 @@
 /area/lar_maria/dorms)
 "fG" = (
 /obj/structure/table/woodentable,
-/obj/item/clothing/head/soft/lar_maria/zhp_cap,
+/obj/item/clothing/head/soft/zhp_cap,
 /turf/simulated/floor/wood,
 /area/lar_maria/dorms)
 "fH" = (
@@ -3215,7 +3187,7 @@
 	dir = 4
 	},
 /obj/effect/decal/cleanable/blood,
-/obj/item/clothing/head/soft/lar_maria/zhp_cap,
+/obj/item/clothing/head/soft/zhp_cap,
 /turf/simulated/floor/tiled,
 /area/lar_maria/hallway)
 "iO" = (
@@ -3268,7 +3240,7 @@
 /area/lar_maria/mess_hall)
 "iW" = (
 /obj/structure/table/standard,
-/obj/item/clothing/head/soft/lar_maria/zhp_cap,
+/obj/item/clothing/head/soft/zhp_cap,
 /turf/simulated/floor/tiled,
 /area/lar_maria/mess_hall)
 "iX" = (

@@ -14,14 +14,14 @@
 	for(var/job_type in signatory_job_list)
 		var/datum/job/job = job_type
 		signatory_job_titles |= "[initial(job.total_positions) == 1 ? "the" : "a"] [initial(job.title)]"
-	waiting_for_signatories_description = replacetext_char(waiting_for_signatories_description, "%STAFF%", english_list(signatory_job_titles, and_text = " or "))
+	waiting_for_signatories_description = replacetext(waiting_for_signatories_description, "%STAFF%", english_list(signatory_job_titles, and_text = " or "))
 	if(!length(paperwork_types))
-		crash_with("Paperwork goal [type] initialized with no available paperwork types!")
+		PRINT_STACK_TRACE("Paperwork goal [type] initialized with no available paperwork types!")
 		SSgoals.pending_goals -= src
 		return
 	paperwork_type = pick(paperwork_types)
 	var/obj/item/paperwork/paperwork_type_obj = paperwork_type
-	waiting_for_signatories_description = replacetext_char(waiting_for_signatories_description, "%PAPERWORK%", "\the [initial(paperwork_type_obj.name)]")
+	waiting_for_signatories_description = replacetext(waiting_for_signatories_description, "%PAPERWORK%", "\the [initial(paperwork_type_obj.name)]")
 
 	..()
 
@@ -35,13 +35,13 @@
 
 	var/list/start_candidates = get_spawn_turfs()
 	if(!length(start_candidates))
-		crash_with("Paperwork goal [type] initialized with no spawn landmarks mapped!")
+		PRINT_STACK_TRACE("Paperwork goal [type] initialized with no spawn landmarks mapped!")
 		SSgoals.pending_goals -= src
 		return FALSE
 
 	var/list/end_candidates = get_end_areas()
 	if(!length(end_candidates))
-		crash_with("Paperwork goal [type] initialized with no end landmarks mapped!")
+		PRINT_STACK_TRACE("Paperwork goal [type] initialized with no end landmarks mapped!")
 		SSgoals.pending_goals -= src
 		return FALSE
 
@@ -62,7 +62,7 @@
 
 /datum/goal/department/paperwork/proc/generate_signatory_list()
 	. = list()
-	for(var/mob/M in GLOB.living_mob_list_)
+	for(var/mob/M in global.living_mob_list_)
 		if(!M.mind?.assigned_job)
 			continue
 		for(var/job_type in signatory_job_list)
@@ -117,7 +117,7 @@
 
 /obj/item/paperwork/on_update_icon()
 	icon_state = "[icon_state][length(has_signed) || ""]"
-	
+
 /obj/item/paperwork/examine(mob/user, distance)
 	. = ..()
 	if(distance <= 1)

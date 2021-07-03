@@ -1,6 +1,6 @@
 SUBSYSTEM_DEF(ticker)
 	name = "Ticker"
-	wait = 10
+	wait = 1 SECOND
 	priority = SS_PRIORITY_TICKER
 	init_order = SS_INIT_TICKER
 	flags = SS_NO_TICK_CHECK | SS_KEEP_TIMING
@@ -22,7 +22,6 @@ SUBSYSTEM_DEF(ticker)
 	var/delay_end = 0               //Can be set true to postpone restart.
 	var/delay_notified = 0          //Spam prevention.
 	var/restart_timeout = 1 MINUTE
-	var/force_ending = 0            //Overriding this variable will force game end. Can be used for adminbuse.
 
 	var/list/minds = list()         //Minds of everyone in the game.
 	var/list/antag_pool = list()
@@ -79,13 +78,13 @@ SUBSYSTEM_DEF(ticker)
 			world.Reboot("Failure to select gamemode. Tried [english_list(bad_modes)].")
 			return
 	// This means we succeeded in picking a game mode.
-	GLOB.using_map.setup_economy()
+	global.using_map.setup_economy()
 	Master.SetRunLevel(RUNLEVEL_GAME)
 
 	create_characters() //Create player characters and transfer them
 	collect_minds()
 	equip_characters()
-	for(var/mob/living/carbon/human/H in GLOB.player_list)
+	for(var/mob/living/carbon/human/H in global.player_list)
 		if(H.mind && !player_is_antag(H.mind, only_offstation_roles = 1))
 			var/datum/job/job = SSjobs.get_by_title(H.mind.assigned_role)
 			if(job && job.create_record)
@@ -96,14 +95,14 @@ SUBSYSTEM_DEF(ticker)
 	spawn(0)//Forking here so we dont have to wait for this to finish
 		mode.post_setup() // Drafts antags who don't override jobs.
 		to_world("<FONT color='blue'><B>Enjoy the game!</B></FONT>")
-		if(GLOB.using_map.welcome_sound)
-			sound_to(world, sound(pick(GLOB.using_map.welcome_sound)))
+		if(global.using_map.welcome_sound)
+			sound_to(world, sound(pick(global.using_map.welcome_sound)))
 		if(global.current_holiday)
 			to_world("<font color='blue'>and...</font>")
 			to_world("<h4>[global.current_holiday.announcement]</h4>")
 			global.current_holiday.set_up_holiday()
 
-	if(!length(GLOB.admins))
+	if(!length(global.admins))
 		send2adminirc("Round has started with no admins online.")
 
 /datum/controller/subsystem/ticker/proc/playing_tick()
@@ -114,7 +113,7 @@ SUBSYSTEM_DEF(ticker)
 		Master.SetRunLevel(RUNLEVEL_POSTGAME)
 		end_game_state = END_GAME_READY_TO_END
 		INVOKE_ASYNC(src, .proc/declare_completion)
-		if(config.allow_map_switching && config.auto_map_vote && GLOB.all_maps.len > 1)
+		if(config.allow_map_switching && config.auto_map_vote && global.all_maps.len > 1)
 			SSvote.initiate_vote(/datum/vote/map/end_game, automatic = 1)
 
 	else if(mode_finished && (end_game_state <= END_GAME_NOT_OVER))
@@ -274,27 +273,24 @@ Helpers
 		mode.announce()
 
 /datum/controller/subsystem/ticker/proc/create_characters()
-	for(var/mob/new_player/player in GLOB.player_list)
-		if(player && player.ready && player.mind)
-			if(player.mind.assigned_role=="AI")
-				player.close_spawn_windows()
-				player.AIize()
-			else if(!player.mind.assigned_role)
+	for(var/mob/new_player/player in global.player_list)
+		if(player.ready && player.mind)
+			if(!player.mind.assigned_role)
 				continue
-			else
-				if(player.create_character())
-					qdel(player)
+			var/mob/living/newplayer = player.create_character()
+			newplayer.mind.assigned_job.do_spawn_special(newplayer, player, FALSE)
+			qdel(player)
 		else if(player && !player.ready)
-			player.new_player_panel()
+			player.show_lobby_menu()
 
 /datum/controller/subsystem/ticker/proc/collect_minds()
-	for(var/mob/living/player in GLOB.player_list)
+	for(var/mob/living/player in global.player_list)
 		if(player.mind)
 			minds += player.mind
 
 /datum/controller/subsystem/ticker/proc/equip_characters()
 	var/captainless=1
-	for(var/mob/living/carbon/human/player in GLOB.player_list)
+	for(var/mob/living/carbon/human/player in global.player_list)
 		if(player && player.mind && player.mind.assigned_role)
 			if(player.mind.assigned_role == "Captain")
 				captainless=0
@@ -302,7 +298,7 @@ Helpers
 				SSjobs.equip_rank(player, player.mind.assigned_role, 0)
 				SScustomitems.equip_custom_items(player)
 	if(captainless)
-		for(var/mob/M in GLOB.player_list)
+		for(var/mob/M in global.player_list)
 			if(!istype(M,/mob/new_player))
 				to_chat(M, "Captainship not forced on anyone.")
 
@@ -350,8 +346,6 @@ Helpers
 	return 0
 
 /datum/controller/subsystem/ticker/proc/game_finished()
-	if(force_ending)
-		return 1
 	if(mode.station_explosion_in_progress)
 		return 0
 	if(config.continous_rounds)
@@ -386,7 +380,7 @@ Helpers
 	for(var/client/C)
 		if(!C.credits)
 			C.RollCredits()
-	for(var/mob/Player in GLOB.player_list)
+	for(var/mob/Player in global.player_list)
 		if(Player.mind && !isnewplayer(Player))
 			if(Player.stat != DEAD)
 				var/turf/playerTurf = get_turf(Player)
@@ -445,7 +439,7 @@ Helpers
 				robo.laws.show_laws(world)
 
 	if(dronecount)
-		to_world("<b>There [dronecount>1 ? "were" : "was"] [dronecount] industrious maintenance [dronecount>1 ? "drones" : "drone"] at the end of this round.</b>")
+		to_world("<b>There [dronecount>1 ? "were" : "was"] [dronecount] industrious maintenance drone\s at the end of this round.</b>")
 
 	if(all_money_accounts.len)
 		var/datum/money_account/max_profit = all_money_accounts[1]

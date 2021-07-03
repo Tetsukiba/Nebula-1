@@ -44,9 +44,6 @@
 	var/obj/item/mech_component/sensors/head
 	var/obj/item/mech_component/chassis/body
 
-	// Invisible components.
-	var/datum/effect/effect/system/spark_spread/sparks
-
 	// Equipment tracking vars.
 	var/obj/item/mech_equipment/selected_system
 	var/selected_hardpoint
@@ -82,7 +79,6 @@
 
 	pixel_x = default_pixel_x
 	pixel_y = default_pixel_y
-	sparks = new(src)
 
 	// Grab all the supplied components.
 	if(source_frame)
@@ -165,6 +161,8 @@
 	. = ..()
 	if(LAZYLEN(pilots) && (!hatch_closed || body.pilot_coverage < 100 || body.transparent_cabin))
 		to_chat(user, "It is being piloted by [english_list(pilots, nothing_text = "nobody")].")
+	if(body && LAZYLEN(body.pilot_positions))
+		to_chat(user, "It can seat [body.pilot_positions.len] pilot\s total.")
 	if(hardpoints.len)
 		to_chat(user, "It has the following hardpoints:")
 		for(var/hardpoint in hardpoints)

@@ -12,12 +12,15 @@
 
 /turf/simulated/wall/r_wall/hull
 	name = "hull"
-	color = COLOR_HULL
+	paint_color = COLOR_HULL
+	stripe_color = COLOR_HULL
 
 /turf/simulated/wall/prepainted
 	paint_color = COLOR_WALL_GUNMETAL
+	stripe_color = COLOR_GUNMETAL
 /turf/simulated/wall/r_wall/prepainted
 	paint_color = COLOR_WALL_GUNMETAL
+	stripe_color = COLOR_GUNMETAL
 
 /turf/simulated/wall/r_wall/hull/Initialize()
 	. = ..()
@@ -25,7 +28,7 @@
 	color = null //color is just for mapping
 	if(prob(40))
 		var/spacefacing = FALSE
-		for(var/direction in GLOB.cardinal)
+		for(var/direction in global.cardinal)
 			var/turf/T = get_step(src, direction)
 			var/area/A = get_area(T)
 			if(A && (A.area_flags & AREA_FLAG_EXTERNAL))
@@ -99,7 +102,7 @@
 	reinf_material = /decl/material/solid/stone/cult/reinforced
 
 /turf/simulated/wall/cult/dismantle_wall()
-	var/decl/special_role/cultist/cult = decls_repository.get_decl(/decl/special_role/cultist)
+	var/decl/special_role/cultist/cult = GET_DECL(/decl/special_role/cultist)
 	cult.remove_cultiness(CULTINESS_PER_TURF)
 	. = ..()
 

@@ -19,8 +19,7 @@
 	var/str_max = 7 //how powerful the effect COULD be
 
 /obj/item/flash/on_update_icon()
-	. = ..()
-	icon_state = initial(icon_state)
+	icon_state = get_world_inventory_state()
 	if(broken)
 		icon_state = "[icon_state]-burnt"
 
@@ -87,13 +86,13 @@
 						flash_strength = (flash_strength / 2)
 				if(flash_strength > 0)
 					M.flash_eyes(FLASH_PROTECTION_MODERATE - safety)
-					M.Stun(flash_strength / 2)
-					M.eye_blurry += flash_strength
-					M.confused += (flash_strength + 2)
+					SET_STATUS_MAX(M, STAT_STUN, (flash_strength / 2))
+					SET_STATUS_MAX(M, STAT_BLURRY, flash_strength)
+					SET_STATUS_MAX(M, STAT_CONFUSE, (flash_strength + 2))
 					if(flash_strength > 3)
 						M.drop_held_items()
 					if(flash_strength > 5)
-						M.Weaken(2)
+						SET_STATUS_MAX(M, STAT_WEAK, 2)
 			else
 				flashfail = 1
 
@@ -101,17 +100,17 @@
 		var/mob/living/simple_animal/SA = M
 		var/safety = SA.eyecheck()
 		if(safety < FLASH_PROTECTION_MAJOR)
-			SA.Weaken(2)
+			SET_STATUS_MAX(SA, STAT_WEAK, 2)
 			if(safety < FLASH_PROTECTION_MODERATE)
-				SA.Stun(flash_strength - 2)
+				SET_STATUS_MAX(SA, STAT_STUN, (flash_strength - 2))
+				SET_STATUS_MAX(SA, STAT_BLURRY, flash_strength)
+				SET_STATUS_MAX(SA, STAT_CONFUSE, flash_strength)
 				SA.flash_eyes(2)
-				SA.eye_blurry += flash_strength
-				SA.confused += flash_strength
 		else 
 			flashfail = 1
 
 	else if(issilicon(M))
-		M.Weaken(rand(str_min,6))
+		SET_STATUS_MAX(M, STAT_WEAK, rand(str_min,6))
 
 	else
 		flashfail = 1
@@ -140,7 +139,7 @@
 
 
 
-/obj/item/flash/attack_self(mob/living/carbon/user, flag = 0, emp = 0)
+/obj/item/flash/attack_self(mob/user, flag = 0, emp = 0)
 	if(!user || !clown_check(user)) 	return 0
 
 	if(broken)
@@ -182,7 +181,7 @@
 		if(safety < FLASH_PROTECTION_MODERATE)
 			if(!M.blinded)
 				M.flash_eyes()
-				M.eye_blurry += 2
+				SET_STATUS_MAX(M, STAT_BLURRY, 2)
 
 	return 1
 
@@ -200,10 +199,9 @@
 				var/mob/living/carbon/M = loc
 				var/safety = M.eyecheck()
 				if(safety < FLASH_PROTECTION_MODERATE)
-					M.Weaken(10)
+					SET_STATUS_MAX(M, STAT_WEAK, 10)
 					M.flash_eyes()
-					for(var/mob/O in viewers(M, null))
-						O.show_message("<span class='disarm'>[M] is blinded by the [name]!</span>")
+					M.visible_message("<span class='disarm'>\The [M] is blinded by \the [src]!</span>")
 	..()
 
 /obj/item/flash/synthetic //not for regular use, weaker effects

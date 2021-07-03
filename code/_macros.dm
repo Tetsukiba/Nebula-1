@@ -1,25 +1,5 @@
 #define any2ref(x) "\ref[x]"
 
-#if DM_VERSION < 513
-
-#define islist(A) istype(A, /list)
-
-#define ismovable(A) istype(A, /atom/movable)
-
-/proc/copytext_char(T, Start = 1, End = 0)
-	return copytext(T, Start, End)
-
-/proc/length_char(E)
-	return length(E)
-
-/proc/findtext_char(Haystack, Needle, Start = 1, End = 0)
-	return findtext(Haystack, Needle, Start, End)
-
-/proc/replacetextEx_char(Haystack, Needle, Replacement, Start = 1, End = 0)
-	return replacetextEx(Haystack, Needle, Replacement, Start, End)
-
-#endif
-
 #define PUBLIC_GAME_MODE SSticker.master_mode
 
 #define Clamp(value, low, high) (value <= low ? low : (value >= high ? high : value))
@@ -89,8 +69,6 @@
 
 #define issilicon(A) istype(A, /mob/living/silicon)
 
-#define isslime(A) istype(A, /mob/living/carbon/slime)
-
 #define isunderwear(A) istype(A, /obj/item/underwear)
 
 #define isvirtualmob(A) istype(A, /mob/observer/virtual)
@@ -131,9 +109,9 @@
 /proc/html_icon(var/thing) // Proc instead of macro to avoid precompiler problems.
 	. = "\icon[thing]"
 
-#define MAP_IMAGE_PATH "nano/images/[GLOB.using_map.path]/"
+#define MAP_IMAGE_PATH "nano/images/[global.using_map.path]/"
 
-#define map_image_file_name(z_level) "[GLOB.using_map.path]-[z_level].png"
+#define map_image_file_name(z_level) "[global.using_map.path]-[z_level].png"
 
 #define RANDOM_BLOOD_TYPE pick(4;"O-", 36;"O+", 3;"A-", 28;"A+", 1;"B-", 20;"B+", 1;"AB-", 5;"AB+")
 
@@ -183,6 +161,8 @@
 
 #define SPAN_INFO(X) "<span class='info'>[X]</span>"
 
+#define STYLE_SMALLFONTS_OUTLINE(X, S, C1, C2) "<span style=\"font-family: 'Small Fonts'; color: [C1]; -dm-text-outline: 1 [C2]; font-size: [S]px\">[X]</span>"
+
 #define FONT_COLORED(color, text) "<font color='[color]'>[text]</font>"
 
 #define FONT_SMALL(X) "<font size='1'>[X]</font>"
@@ -195,4 +175,4 @@
 
 #define FONT_GIANT(X) "<font size='5'>[X]</font>"
 
-#define crash_with(X) crash_at(X, __FILE__, __LINE__)
+#define PRINT_STACK_TRACE(X) get_stack_trace(X, __FILE__, __LINE__)

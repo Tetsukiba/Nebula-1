@@ -14,8 +14,8 @@
 	var/loss_feedback_tag                   // Used by the database for end of round loss.
 
 	// Role data.
-	var/name = "Traitor"               // special_role text.
-	var/name_plural = "Traitors"       // As above but plural.
+	var/name                                // special_role text (ex. "Traitor").
+	var/name_plural                         // As above but plural.
 
 	// Visual references.
 	var/antaghud_indicator = "hudsyndicate" // Used by the ghost antagHUD.
@@ -70,7 +70,11 @@
 
 	// ID card stuff.
 	var/default_access = list()
+	var/id_title
 	var/id_type = /obj/item/card/id
+	var/rig_type
+
+	var/default_outfit
 
 	var/antag_text = "You are an antagonist! Within the rules, \
 		try to act as an opposing force to the crew. Further RP and try to make sure \
@@ -83,6 +87,8 @@
 	var/datum/map_template/base_to_load
 
 /decl/special_role/New()
+	if(!name)
+		PRINT_STACK_TRACE("Special role [type] created without name set.")
 	if(ispath(skill_setter))
 		skill_setter = new skill_setter
 	..()
@@ -96,13 +102,22 @@
 	if(config.protect_roles_from_antagonist)
 		restricted_jobs |= protected_jobs
 	if(antaghud_indicator)
-		if(!GLOB.hud_icon_reference)
-			GLOB.hud_icon_reference = list()
+		if(!global.hud_icon_reference)
+			global.hud_icon_reference = list()
 		if(name) 
-			GLOB.hud_icon_reference[name] = antaghud_indicator
+			global.hud_icon_reference[name] = antaghud_indicator
 		if(faction_name) 
-			GLOB.hud_icon_reference[faction_name] = antaghud_indicator
+			global.hud_icon_reference[faction_name] = antaghud_indicator
 	. = TRUE
+
+/decl/special_role/proc/get_antag_text(mob/recipient)
+	return antag_text
+
+/decl/special_role/proc/get_welcome_text(mob/recipient)
+	return welcome_text
+
+/decl/special_role/proc/get_leader_welcome_text(mob/recipient)
+	return leader_welcome_text
 
 /decl/special_role/proc/tick()
 	return 1

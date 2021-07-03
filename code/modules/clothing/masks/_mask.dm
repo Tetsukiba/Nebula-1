@@ -1,9 +1,13 @@
 /obj/item/clothing/mask
 	name = "mask"
+	icon = 'icons/clothing/mask/breath.dmi'
 	icon_state = ICON_STATE_WORLD
 	slot_flags = SLOT_FACE
 	body_parts_covered = SLOT_FACE|SLOT_EYES
 	blood_overlay_type = "maskblood"
+	material = /decl/material/solid/fiberglass
+	matter = list(/decl/material/solid/plastic = MATTER_AMOUNT_REINFORCEMENT)
+	origin_tech = "{'materials':1,'engineering':1}"
 
 	var/voicechange = 0
 	var/list/say_messages
@@ -30,11 +34,11 @@
 		var/mob/M = src.loc
 		M.update_inv_wear_mask()
 
-/obj/item/clothing/mask/experimental_mob_overlay(mob/user_mob, slot, bodypart)
-	var/image/I = ..()
-	if(I && hanging && slot == slot_wear_mask_str && check_state_in_icon("[I.icon_state]-down", I.icon))
-		I.icon_state = "[I.icon_state]-down"
-	return I
+/obj/item/clothing/mask/get_mob_overlay(mob/user_mob, slot, bodypart)
+	var/image/ret = ..()
+	if(ret && hanging && slot == slot_wear_mask_str && check_state_in_icon("[ret.icon_state]-down", ret.icon))
+		ret.icon_state = "[ret.icon_state]-down"
+	return ret
  
 /obj/item/clothing/mask/proc/filter_air(datum/gas_mixture/air)
 	return

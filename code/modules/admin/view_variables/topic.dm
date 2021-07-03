@@ -109,7 +109,7 @@
 		href_list["datumrefresh"] = href_list["give_spell"]
 
 	else if(href_list["godmode"])
-		if(!check_rights(R_REJUVINATE))	return
+		if(!check_rights(R_REJUVENATE))	return
 
 		var/mob/M = locate(href_list["godmode"])
 		if(!istype(M))
@@ -288,20 +288,6 @@
 			return
 		holder.Topic(href, list("makerobot"=href_list["makerobot"]))
 
-	else if(href_list["makeslime"])
-		if(!check_rights(R_SPAWN))	return
-
-		var/mob/living/carbon/human/H = locate(href_list["makeslime"])
-		if(!istype(H))
-			to_chat(usr, "This can only be done to instances of type /mob/living/carbon/human")
-			return
-
-		if(alert("Confirm mob type change?",,"Transform","Cancel") != "Transform")	return
-		if(!H)
-			to_chat(usr, "Mob doesn't exist anymore")
-			return
-		holder.Topic(href, list("makeslime"=href_list["makeslime"]))
-
 	else if(href_list["makeai"])
 		if(!check_rights(R_SPAWN))	return
 
@@ -450,7 +436,7 @@
 		possibleverbs -= H.verbs
 		possibleverbs += "Cancel" 								// ...And one for the bottom
 
-		var/verb = input("Select a verb!", "Verbs",null) as anything in possibleverbs
+		var/verb = input("Select a verb!", "Verbs",null) as null|anything in possibleverbs
 		if(!H)
 			to_chat(usr, "Mob doesn't exist anymore")
 			return

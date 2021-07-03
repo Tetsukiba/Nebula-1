@@ -5,7 +5,7 @@
 	icon_state = "syringe-cartridge"
 	var/icon_flight = "syringe-cartridge-flight" //so it doesn't look so weird when shot
 	material = /decl/material/solid/metal/steel
-	matter = list(/decl/material/solid/glass = MATTER_AMOUNT_REINFORCEMENT)
+	matter = list(/decl/material/solid/fiberglass = MATTER_AMOUNT_REINFORCEMENT)
 	obj_flags = OBJ_FLAG_CONDUCTIBLE
 	slot_flags = SLOT_LOWER_BODY | SLOT_EARS
 	throwforce = 3
@@ -91,7 +91,7 @@
 	darts -= next
 	next = null
 
-/obj/item/gun/launcher/syringe/attack_self(mob/living/user)
+/obj/item/gun/launcher/syringe/attack_self(mob/user)
 	if(next)
 		user.visible_message("[user] unlatches and carefully relaxes the bolt on [src].", "<span class='warning'>You unlatch and carefully relax the bolt on [src], unloading the spring.</span>")
 		next = null
@@ -101,7 +101,7 @@
 		next = darts[1]
 	add_fingerprint(user)
 
-/obj/item/gun/launcher/syringe/attack_hand(mob/living/user)
+/obj/item/gun/launcher/syringe/attack_hand(mob/user)
 	if(user.is_holding_offhand(src))
 		if(!darts.len)
 			to_chat(user, "<span class='warning'>[src] is empty.</span>")
@@ -135,7 +135,7 @@
 	icon = 'icons/obj/guns/launcher/syringe_rapid.dmi'
 	max_darts = 5
 	material = /decl/material/solid/metal/steel
-	matter = list(/decl/material/solid/glass = MATTER_AMOUNT_REINFORCEMENT)
+	matter = list(/decl/material/solid/fiberglass = MATTER_AMOUNT_REINFORCEMENT)
 
 /obj/item/gun/launcher/syringe/disguised
 	name = "deluxe electronic cigarette"

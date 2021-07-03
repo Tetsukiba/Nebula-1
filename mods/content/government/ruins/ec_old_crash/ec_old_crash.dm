@@ -52,10 +52,7 @@
 /obj/item/disk/astrodata
 	name = "astronomical data disk"
 	desc = "A disk with a wealth of astronomical data recorded. Astrophysicists at the EC Observatory would love to see this."
-	icon = 'icons/obj/cloning.dmi'
-	icon_state = "datadisk0"
-	item_state = "card-id"
-	w_class = ITEM_SIZE_SMALL
+	color = COLOR_BLUE_GRAY
 
 /obj/item/ecletters
 	name = "bundle of letters"
@@ -65,7 +62,7 @@
 
 /obj/item/ecletters/Initialize()
 	. = ..()
-	desc = "A bunch of letters from Expeditionary Corps explorers to their family and loved ones, dated [GLOB.using_map.game_year - 142]. They're not hopeful."
+	desc = "A bunch of letters from Expeditionary Corps explorers to their family and loved ones, dated [global.using_map.game_year - 142]. They're not hopeful."
 
 /obj/item/paper/ecrashlog
 	name = "handwritten note"
@@ -73,7 +70,7 @@
 /obj/item/paper/ecrashlog/Initialize()
 	. = ..()
 	var/shipname = "TEV [pick("Magellan", "Gagarin", "Drake", "Horizon", "Aurora")]"
-	var/decl/cultural_info/S = SSlore.get_culture(CULTURE_HUMAN)
+	var/decl/cultural_info/S = GET_DECL(/decl/cultural_info/culture/human)
 	var/new_info = {"
 	I am Lieutenant Hao Ru, captain of [shipname], of the Terran Commonwealth Expeditionary Corps.<br>
 	We are dying. The Ran Mission has failed.<br>
@@ -90,7 +87,7 @@
 	Senior Explorer [S.get_random_name(null, pick(MALE,FEMALE))]<br>
 	Explorer [S.get_random_name(null, pick(MALE,FEMALE))]<br>
 	I am Lieutenant Hao Ru, captain of [shipname] of the Terran Commonwealth Expeditionary Corps. I will be joining my crew in cryo now.<br>
-	<i>3rd December [GLOB.using_map.game_year - 142]</i></tt>
+	<i>3rd December [global.using_map.game_year - 142]</i></tt>
 	"}
 	set_content(new_info)
 

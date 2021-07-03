@@ -27,7 +27,7 @@
 		update_icon()
 		update_air()
 		sleep(15)
-		set_light(0.4, 0.1, 1)
+		set_light(1)
 		src.blocks_air = 1
 		set_opacity(1)
 		for(var/turf/simulated/turf in loc)
@@ -229,7 +229,7 @@
 				else if(isWirecutter(W))
 					playsound(src, 'sound/items/Wirecutter.ogg', 100, 1)
 					construction_stage = 5
-					new /obj/item/stack/material/rods( src )
+					SSmaterials.create_object(/decl/material/solid/metal/steel, src, 1, /obj/item/stack/material/rods)
 					to_chat(user, "<span class='notice'>You cut the outer grille.</span>")
 					update_icon()
 					return TRUE
@@ -319,7 +319,7 @@
 						return
 					construction_stage = 0
 					update_icon()
-					new /obj/item/stack/material/rods(src)
+					SSmaterials.create_object(/decl/material/solid/metal/steel, src, 1, /obj/item/stack/material/rods)
 					to_chat(user, "<span class='notice'>The support rods drop out as you cut them loose from the frame.</span>")
 					return
 			if(0)
@@ -347,23 +347,27 @@
 		var/mob/living/L = user
 		if(L.a_intent == I_HELP)
 			return
-	
+
 	user.do_attack_animation(src)
-	if(W.force < 5)
+	var/material_divisor = max(material.brute_armor, reinf_material?.brute_armor)
+	if(W.damtype == BURN)
+		material_divisor = max(material.burn_armor, reinf_material?.burn_armor)
+	var/effective_force = round(W.force / material_divisor)
+	if(effective_force < 2)
 		visible_message(SPAN_DANGER("\The [user] [pick(W.attack_verb)] \the [src] with \the [W], but it had no effect!"))
 		playsound(src, hitsound, 25, 1)
 		return
 	// Check for a glancing blow.
-	var/dam_prob = max(0, 100 - material.hardness + W.force)
+	var/dam_prob = max(0, 100 - material.hardness + effective_force + W.armor_penetration)
 	if(!prob(dam_prob))
 		visible_message(SPAN_DANGER("\The [user] [pick(W.attack_verb)] \the [src] with \the [W], but it bounced off!"))
 		playsound(src, hitsound, 25, 1)
 		if(user.skill_fail_prob(SKILL_HAULING, 40, SKILL_ADEPT))
-			user.Weaken(2)
+			SET_STATUS_MAX(user, STAT_WEAK, 2)
 			visible_message(SPAN_DANGER("\The [user] is knocked back by the force of the blow!"))
 		return
 
 	playsound(src, 'sound/effects/metalhit.ogg', 50, 1)
 	visible_message(SPAN_DANGER("\The [user] [pick(W.attack_verb)] \the [src] with \the [W]!"))
-	take_damage(10)
+	take_damage(effective_force)
 	return TRUE

@@ -28,7 +28,7 @@
 /obj/structure/reagent_dispensers/proc/leak()
 	var/turf/T = get_turf(src)
 	if(reagents && T)
-		reagents.trans_to_turf(T, FLUID_PUDDLE)
+		reagents.trans_to_turf(T, min(reagents.total_volume, FLUID_PUDDLE))
 
 /obj/structure/reagent_dispensers/Move()
 	. = ..()
@@ -66,7 +66,7 @@
 		to_chat(user, SPAN_NOTICE("It contains:"))
 		if(LAZYLEN(reagents?.reagent_volumes))
 			for(var/rtype in reagents.reagent_volumes)
-				var/decl/material/R = decls_repository.get_decl(rtype)
+				var/decl/material/R = GET_DECL(rtype)
 				to_chat(user, SPAN_NOTICE("[REAGENT_VOLUME(reagents, rtype)] units of [R.name]"))
 		else
 			to_chat(user, SPAN_NOTICE("Nothing."))
@@ -85,7 +85,7 @@
 	if (N)
 		amount_per_transfer_from_this = N
 
-/obj/structure/reagent_dispensers/physically_destroyed()
+/obj/structure/reagent_dispensers/physically_destroyed(var/skip_qdel)
 	if(reagents?.total_volume)
 		var/turf/T = get_turf(src)
 		if(T)
@@ -113,9 +113,13 @@
 	icon_state = "watertank"
 	amount_per_transfer_from_this = 10
 	possible_transfer_amounts = @"[10,25,50,100]"
-	initial_capacity = 50000
+	initial_capacity = 7500
 	initial_reagent_types = list(/decl/material/liquid/water = 1)
 	atom_flags = ATOM_FLAG_NO_TEMP_CHANGE | ATOM_FLAG_CLIMBABLE
+
+/obj/structure/reagent_dispensers/watertank/firefighter
+	name = "firefighting water reserve"
+	initial_capacity = 50000
 
 /obj/structure/reagent_dispensers/watertank/attackby(obj/item/W, mob/user)
 	if((istype(W, /obj/item/robot_parts/l_arm) || istype(W, /obj/item/robot_parts/r_arm)) && user.unEquip(W))

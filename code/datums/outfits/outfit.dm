@@ -1,6 +1,6 @@
-var/list/outfits_decls_
-var/list/outfits_decls_root_
-var/list/outfits_decls_by_type_
+var/global/list/outfits_decls_
+var/global/list/outfits_decls_root_
+var/global/list/outfits_decls_by_type_
 
 /proc/outfit_by_type(var/outfit_type)
 	if(!outfits_decls_root_)
@@ -17,7 +17,7 @@ var/list/outfits_decls_by_type_
 		return
 	outfits_decls_ = list()
 	outfits_decls_by_type_ = list()
-	outfits_decls_root_ = decls_repository.get_decl(/decl/hierarchy/outfit)
+	outfits_decls_root_ = GET_DECL(/decl/hierarchy/outfit)
 
 /decl/hierarchy/outfit
 	name = "Naked"
@@ -105,7 +105,7 @@ var/list/outfits_decls_by_type_
 	if(uniform)
 		H.equip_to_slot_or_del(new uniform(H),slot_w_uniform_str)
 		if(!H.get_equipped_item(slot_w_uniform_str))
-			H.equip_to_slot_or_del(new /obj/item/clothing/under/harness, slot_w_uniform_str)
+			H.species.equip_default_fallback_uniform(H)
 	if(holster && H.w_uniform)
 		var/obj/item/clothing/accessory/equip_holster = new holster
 		H.w_uniform.attackby(H, equip_holster)
@@ -165,7 +165,16 @@ var/list/outfits_decls_by_type_
 				H.equip_to_slot_or_del(backpack, slot_back_str)
 
 	if(H.species && !(OUTFIT_ADJUSTMENT_SKIP_SURVIVAL_GEAR & equip_adjustments))
-		H.species.equip_survival_gear(H, flags&OUTFIT_EXTENDED_SURVIVAL)
+		if(flags & OUTFIT_EXTENDED_SURVIVAL)
+			H.species.equip_survival_gear(H, /obj/item/storage/box/engineer)
+		else if(H.client?.prefs?.survival_box_choice && global.survival_box_choices[H.client.prefs.survival_box_choice])
+			var/decl/survival_box_option/box = global.survival_box_choices[H.client.prefs.survival_box_choice]
+			H.species.equip_survival_gear(H, box.box_type)
+		else
+			H.species.equip_survival_gear(H)
+
+	if(H.client?.prefs?.give_passport)
+		global.using_map.create_passport(H)
 
 /decl/hierarchy/outfit/proc/equip_id(var/mob/living/carbon/human/H, var/rank, var/assignment, var/equip_adjustments)
 	if(!id_slot || !id_type)

@@ -339,7 +339,7 @@
 
 //Used in preferences' SetFlavorText and human's set_flavor verb
 //Previews a string of len or less length
-proc/TextPreview(var/string,var/len=40)
+/proc/TextPreview(var/string,var/len=40)
 	if(length(string) <= len)
 		if(!length(string))
 			return "\[...\]"
@@ -353,7 +353,7 @@ proc/TextPreview(var/string,var/len=40)
 	return html_encode(copytext(html_decode(text), first, last))
 
 /proc/create_text_tag(var/tagname, var/tagdesc = tagname, var/client/C = null)
-	if(!(C && C.get_preference_value(/datum/client_preference/chat_tags) == GLOB.PREF_SHOW))
+	if(!(C && C.get_preference_value(/datum/client_preference/chat_tags) == PREF_SHOW))
 		return tagdesc
 	return "<IMG src='\ref['./icons/chattags.dmi']' class='text_tag' iconstate='[tagname]'" + (tagdesc ? " alt='[tagdesc]'" : "") + ">"
 
@@ -381,8 +381,6 @@ proc/TextPreview(var/string,var/len=40)
 	. = jointext(.,null)
 
 #define starts_with(string, substring) (copytext(string,1,1+length(substring)) == substring)
-
-#define gender2text(gender) capitalize(gender)
 
 /**
  * Strip out the special beyond characters for \proper and \improper
@@ -561,9 +559,8 @@ proc/TextPreview(var/string,var/len=40)
 	text = replacetext(text, "&", "")
 	return text
 
-// Switch to use copytext_char() when 513 is in
-var/list/fullstop_alternatives = list(".", "!", "?")
-#define APPEND_FULLSTOP_IF_NEEDED(TXT) ((copytext(TXT, -1, 0) in global.fullstop_alternatives) ? TXT : "[TXT].")
+var/global/list/fullstop_alternatives = list(".", "!", "?")
+#define APPEND_FULLSTOP_IF_NEEDED(TXT) ((copytext_char(TXT, -1, 0) in global.fullstop_alternatives) ? TXT : "[TXT].")
 
 /proc/make_rainbow(var/msg)
 	for(var/i = 1 to length(msg))

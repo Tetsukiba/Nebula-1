@@ -41,10 +41,11 @@
 /datum/uplink_item/item/services/fake_update_annoncement/New()
 	..()
 	item_cost = round(DEFAULT_TELECRYSTAL_AMOUNT / 2)
+	addtimer(CALLBACK(src, .proc/finalize_announce), 2)
 
-	spawn(2)
-		name = "[command_name()] Update Announcement"
-		desc = "Causes a falsified [command_name()] Update."
+/datum/uplink_item/item/services/fake_update_annoncement/proc/finalize_announce()
+	name = "[command_name()] Update Announcement"
+	desc = "Causes a falsified [command_name()] Update."
 
 /***************
 * Service Item *
@@ -110,7 +111,7 @@
 	visible_message("<span class='warning'>\The [src] shuts down with a spark.</span>")
 
 /obj/item/uplink_service/on_update_icon()
-	icon_state = initial(icon_state)
+	icon_state = get_world_inventory_state()
 	switch(state)
 		if(CURRENTLY_ACTIVE)
 			icon_state = "[icon_state]-on"
@@ -186,7 +187,7 @@
 	if(!message)
 		return
 
-	if(CanUseTopic(user, GLOB.hands_state) != STATUS_INTERACTIVE)
+	if(CanUseTopic(user, global.hands_topic_state) != STATUS_INTERACTIVE)
 		return FALSE
 	command_announcement.Announce(message, title, msg_sanitized = 1, zlevels = GetConnectedZlevels(get_z(src)))
 	return TRUE
@@ -231,7 +232,7 @@
 	var/datum/job/job = SSjobs.get_by_title(new_record.get_job())
 	if(job)
 		var/skills = list()
-		for(var/decl/hierarchy/skill/S in GLOB.skills)
+		for(var/decl/hierarchy/skill/S in global.skills)
 			var/level = job.min_skill[S.type]
 			if(prob(10))
 				level = min(rand(1,3), job.max_skill[S.type])

@@ -2,14 +2,14 @@
 	return dna?.lineage || create_gyne_name()
 
 /proc/create_gyne_name()
-	var/gynename = "[capitalize(pick(GLOB.gyne_architecture))] [capitalize(pick(GLOB.gyne_geoforms))]"
+	var/gynename = "[capitalize(pick(global.gyne_architecture))] [capitalize(pick(global.gyne_geoforms))]"
 	return gynename
 
 //Thanks to:
 // - https://en.wikipedia.org/wiki/List_of_landforms
 // - https://en.wikipedia.org/wiki/Outline_of_classical_architecture
 
-GLOBAL_LIST_INIT(gyne_geoforms, list(
+var/global/list/gyne_geoforms = list(
 	"abime",         "abyss",         "ait",         "anabranch",    "arc",           "arch",          "archipelago",  "arete",
 	"arroyo",        "atoll",         "ayre",        "badlands",     "bar",           "barchan",       "barrier",      "basin",
 	"bay",           "bayou",         "beach",       "bight",        "blowhole",      "blowout",       "bluff",        "bornhardt",
@@ -35,9 +35,9 @@ GLOBAL_LIST_INIT(gyne_geoforms, list(
 	"thalweg",       "tidepool",      "tombolo",     "tor",          "towhead",       "tube",          "tunnel",       "turlough",
 	"tuya",          "uvala",         "vale",        "valley",       "vent",          "ventifact",     "volcano",      "wadi",
 	"waterfall",     "watershed"
-))
+)
 
-GLOBAL_LIST_INIT(gyne_architecture, list(
+var/global/list/gyne_architecture = list(
 	"barrel",        "annular",       "aynali",      "baroque",      "catalan",       "cavetto",       "catenary",     "cloister",
 	"corbel",        "cross",         "cycloidal",   "cylindrical",  "diamond",       "domical",       "fan",          "lierne",
 	"muqarnas",      "net",           "nubian",      "ogee",         "ogival",        "parabolic",     "hyperbolic",   "volute",
@@ -60,10 +60,10 @@ GLOBAL_LIST_INIT(gyne_architecture, list(
 	"ethical",       "micro",         "macro",       "genetic",      "intrinsic",     "extrinsic",     "academic",     "literary",
 	"artisan",       "absolute",      "absolutist",  "autonomous",   "collectivist",  "bicameral",     "colonialist",  "federal",
 	"imperial",      "independant",   "managed",     "multilateral", "neutral",       "nonaligned",    "parastatal"
-))
+)
 
 /decl/cultural_info/culture/ascent
-	name =             CULTURE_ASCENT
+	name =             "The Ascent"
 	language =         /decl/language/mantid/nonvocal
 	default_language = /decl/language/mantid
 	additional_langs = list(/decl/language/mantid/worldnet, /decl/language/mantid)
@@ -86,7 +86,7 @@ GLOBAL_LIST_INIT(gyne_architecture, list(
 		return "[random_id(/decl/species/mantid, 1, 99)] [lineage]"
 
 /decl/cultural_info/location/kharmaani
-	name = HOME_SYSTEM_KHARMAANI
+	name = "Core"
 	language =    /decl/language/mantid/nonvocal
 	description = "The Kharmaani are not terribly imaginative when it comes to naming their worlds. Core, \
 	their birth star, supports the humid greenhouse-gas-choked giant called Home, which the majority of the \
@@ -96,7 +96,7 @@ GLOBAL_LIST_INIT(gyne_architecture, list(
 	hidden = TRUE
 
 /decl/cultural_info/faction/ascent_serpentid
-	name =        FACTION_ASCENT_SERPENTID
+	name =        "Ascent Serpentid"
 	language =    /decl/language/mantid/nonvocal
 	description = "Members of the Ascent tend to be organized along the natural lines of their respective species. \
 	For Kharmaani, this is oriented around individual gynes and their power structures. Serpentids have a slightly less \
@@ -106,7 +106,7 @@ GLOBAL_LIST_INIT(gyne_architecture, list(
 	hidden = TRUE
 
 /decl/cultural_info/faction/ascent_alate
-	name =        FACTION_ASCENT_ALATE
+	name =        "Ascent Alate"
 	language =    /decl/language/mantid/nonvocal
 	description = "The life of an alate is a difficult and frequently short one. Those who survive \
 	to maturity have had the violent and uncompromising culture of the Ascent beaten into them with \
@@ -120,7 +120,7 @@ GLOBAL_LIST_INIT(gyne_architecture, list(
 	hidden = TRUE
 
 /decl/cultural_info/faction/ascent_gyne
-	name =        FACTION_ASCENT_GYNE
+	name =        "Ascent Gyne"
 	language =    /decl/language/mantid/nonvocal
 	description = "By the time a gyne has survived her 'childhood' and shed the exoskeleton of an \
 	alate during a breeding frenzy, she has obtained a master class education in murdering and eating \
@@ -132,7 +132,7 @@ GLOBAL_LIST_INIT(gyne_architecture, list(
 	hidden = TRUE
 
 /decl/cultural_info/religion/kharmaani
-	name = RELIGION_KHARMAANI
+	name = "Nest-Lineage Veneration"
 	description = "To the Kharmaani, the gyne is the embodiment of both the soul of the land she rules, and the \
 	power and prosperity of the genetic lineage she contains. The closest thing they have to spirituality is the \
 	veneration of their mother, and the protection and preservation of their worlds."

@@ -108,6 +108,7 @@
 	return list(/obj/item/storage/toolbox/mechanical = 30,
 				/obj/item/storage/toolbox/electrical = 20,
 				/obj/item/storage/toolbox/emergency = 20,
+				/obj/item/storage/toolbox/repairs = 20,
 				/obj/item/storage/toolbox/syndicate = 1)
 
 /obj/random/tech_supply
@@ -257,7 +258,7 @@
 				/obj/item/chems/food/drinks/bottle/gin,
 				/obj/item/chems/food/drinks/bottle/agedwhiskey,
 				/obj/item/chems/food/drinks/bottle/vodka,
-				/obj/item/chems/food/drinks/bottle/tequilla,
+				/obj/item/chems/food/drinks/bottle/tequila,
 				/obj/item/chems/food/drinks/bottle/absinthe,
 				/obj/item/chems/food/drinks/bottle/wine,
 				/obj/item/chems/food/drinks/bottle/cognac,
@@ -505,7 +506,7 @@
 				/obj/item/toy/snappop,
 				/obj/item/toy/sword,
 				/obj/item/toy/water_balloon,
-				/obj/item/toy/crossbow,
+				/obj/item/gun/launcher/foam/crossbow,
 				/obj/item/toy/blink,
 				/obj/item/chems/spray/waterflower,
 				/obj/item/toy/prize/powerloader,
@@ -545,22 +546,26 @@
 	icon_state = "sheet"
 
 /obj/random/material/spawn_choices()
-	return list(/obj/item/stack/material/steel/ten,
-				/obj/item/stack/material/glass/ten,
-				/obj/item/stack/material/glass/reinforced/ten,
-				/obj/item/stack/material/plastic/ten,
-				/obj/item/stack/material/wood/ten,
-				/obj/item/stack/material/cardboard/ten,
-				/obj/item/stack/material/rods/ten,
-				/obj/item/stack/material/plasteel/ten,
-				/obj/item/stack/material/steel/fifty,
-				/obj/item/stack/material/glass/fifty,
-				/obj/item/stack/material/glass/reinforced/fifty,
-				/obj/item/stack/material/plastic/fifty,
-				/obj/item/stack/material/wood/fifty,
-				/obj/item/stack/material/cardboard/fifty,
-				/obj/item/stack/material/rods/fifty,
-				/obj/item/stack/material/plasteel/fifty)
+	return list(
+		/obj/item/stack/material/sheet/mapped/steel/ten,
+		/obj/item/stack/material/pane/mapped/glass/ten,
+		/obj/item/stack/material/pane/mapped/rglass/ten,
+		/obj/item/stack/material/panel/mapped/plastic/ten,
+		/obj/item/stack/material/plank/mapped/wood/ten,
+		/obj/item/stack/material/cardstock/mapped/cardboard/ten,
+		/obj/item/stack/material/reinforced/mapped/plasteel/ten,
+		/obj/item/stack/material/sheet/mapped/steel/fifty,
+		/obj/item/stack/material/reinforced/mapped/fiberglass/fifty,
+		/obj/item/stack/material/ingot/mapped/copper/fifty,
+		/obj/item/stack/material/pane/mapped/glass/fifty,
+		/obj/item/stack/material/pane/mapped/rglass/fifty,
+		/obj/item/stack/material/panel/mapped/plastic/fifty,
+		/obj/item/stack/material/plank/mapped/wood/fifty,
+		/obj/item/stack/material/cardstock/mapped/cardboard/fifty,
+		/obj/item/stack/material/reinforced/mapped/plasteel/fifty,
+		/obj/item/stack/material/rods/ten,
+		/obj/item/stack/material/rods/fifty
+	)
 
 /obj/random/soap
 	name = "Random Cleaning Supplies"
@@ -574,13 +579,13 @@
 				/obj/item/chems/spray/cleaner = 2,
 				/obj/item/grenade/chem_grenade/cleaner = 1)
 
-obj/random/obstruction //Large objects to block things off in maintenance
+/obj/random/obstruction //Large objects to block things off in maintenance
 	name = "random obstruction"
 	desc = "This is a random obstruction."
 	icon = 'icons/obj/cult.dmi'
 	icon_state = "cultgirder"
 
-obj/random/obstruction/spawn_choices()
+/obj/random/obstruction/spawn_choices()
 	return list(/obj/structure/barricade,
 				/obj/structure/girder,
 				/obj/structure/girder/displaced,
@@ -781,8 +786,8 @@ obj/random/obstruction/spawn_choices()
 /obj/random/glasses
 	name = "random eyewear"
 	desc = "This is a random pair of glasses."
-	icon = 'icons/obj/clothing/obj_eyes.dmi'
-	icon_state = "leforge"
+	icon = 'icons/clothing/eyes/glasses_prescription.dmi'
+	icon_state = ICON_STATE_WORLD
 
 /obj/random/glasses/spawn_choices()
 	return list(/obj/item/clothing/glasses/sunglasses = 3,
@@ -845,18 +850,18 @@ obj/random/obstruction/spawn_choices()
 /obj/random/clothing
 	name = "random clothes"
 	desc = "This is a random piece of clothing."
-	icon = 'icons/obj/clothing/obj_under.dmi'
-	icon_state = "jumpsuit"
+	icon = 'icons/clothing/under/jumpsuits/jumpsuit.dmi'
+	icon_state = ICON_STATE_WORLD
 
 /obj/random/clothing/spawn_choices()
 	return list(/obj/item/clothing/under/syndicate/tacticool = 2,
 				/obj/item/clothing/under/syndicate/combat = 1,
 				/obj/item/clothing/under/hazard = 4,
 				/obj/item/clothing/under/sterile = 4,
-				/obj/item/clothing/under/casual_pants/camo = 2,
+				/obj/item/clothing/pants/casual/camo = 2,
 				/obj/item/clothing/under/frontier = 2,
 				/obj/item/clothing/under/harness = 2,
-				/obj/item/clothing/under/rank/medical/paramedic = 2,
+				/obj/item/clothing/under/medical/paramedic = 2,
 				/obj/item/clothing/under/overalls = 2,
 				/obj/item/clothing/head/earmuffs = 2,
 				/obj/item/clothing/under/tactical = 1)
@@ -864,15 +869,15 @@ obj/random/obstruction/spawn_choices()
 /obj/random/accessory
 	name = "random accessory"
 	desc = "This is a random utility accessory."
-	icon = 'icons/obj/clothing/obj_accessories.dmi'
-	icon_state = "horribletie"
+	icon = 'icons/clothing/accessories/ties/tie_horrible.dmi'
+	icon_state = ICON_STATE_WORLD
 
 /obj/random/accessory/spawn_choices()
-	return list(/obj/item/clothing/accessory/storage/webbing = 3,
+	return list(/obj/item/clothing/accessory/storage = 3,
 				/obj/item/clothing/accessory/storage/webbing_large = 3,
-				/obj/item/clothing/accessory/storage/black_vest = 2,
-				/obj/item/clothing/accessory/storage/brown_vest = 2,
-				/obj/item/clothing/accessory/storage/white_vest = 2,
+				/obj/item/clothing/accessory/storage/vest/black = 2,
+				/obj/item/clothing/accessory/storage/vest/brown = 2,
+				/obj/item/clothing/accessory/storage/vest = 2,
 				/obj/item/clothing/accessory/storage/bandolier = 1,
 				/obj/item/clothing/accessory/storage/holster/thigh = 1,
 				/obj/item/clothing/accessory/storage/holster/hip = 1,
@@ -885,7 +890,7 @@ obj/random/obstruction/spawn_choices()
 	name = "random currency"
 	desc = "LOADSAMONEY!"
 	icon = 'icons/obj/items/money.dmi'
-	icon_state = "spacecash1"
+	icon_state = "cash"
 
 /obj/random/cash/spawn_choices()
 	return list(/obj/item/cash/c1 = 4,
@@ -976,16 +981,17 @@ something, make sure it's not in one of the other lists.*/
 				/obj/item/clothing/suit/armor/pcarrier/merc = 3,
 				/obj/item/clothing/suit/straight_jacket = 6,
 				/obj/item/clothing/head/helmet/merc = 3,
-				/obj/item/stack/material/diamond/ten = 7,
-				/obj/item/stack/material/glass/reinforced_borosilicate/ten = 7,
-				/obj/item/stack/material/marble/ten = 8,
-				/obj/item/stack/material/gold/ten = 7,
-				/obj/item/stack/material/silver/ten = 7,
-				/obj/item/stack/material/osmium/ten = 7,
-				/obj/item/stack/material/platinum/ten = 8,
-				/obj/item/stack/material/tritium/ten = 7,
-				/obj/item/stack/material/mhydrogen/ten = 6,
-				/obj/item/stack/material/plasteel/ten = 9,
+				/obj/item/stack/material/gemstone/mapped/diamond/ten = 7,
+				/obj/item/stack/material/pane/mapped/rborosilicate/ten = 7,
+				/obj/item/stack/material/brick/mapped/marble/ten = 8,
+				/obj/item/stack/material/ingot/mapped/gold/ten = 7,
+				/obj/item/stack/material/ingot/mapped/silver/ten = 7,
+				/obj/item/stack/material/ingot/mapped/osmium/ten = 7,
+				/obj/item/stack/material/ingot/mapped/platinum/ten = 8,
+				/obj/item/stack/material/aerogel/mapped/tritium/ten = 7,
+				/obj/item/stack/material/segment/mapped/mhydrogen/ten = 6,
+				/obj/item/stack/material/reinforced/mapped/plasteel/ten = 9,
+				/obj/item/stack/material/ingot/mapped/copper/ten = 8,
 				/obj/item/storage/box/monkeycubes = 5,
 				/obj/item/storage/firstaid/surgery = 4,
 				/obj/item/cell/infinite = 1,
@@ -1066,7 +1072,7 @@ something, make sure it's not in one of the other lists.*/
 	icon_state = "standing"
 	spawn_nothing_percentage = 80
 
-obj/random/hostile/spawn_choices()
+/obj/random/hostile/spawn_choices()
 	return list(/mob/living/simple_animal/hostile/viscerator,
 				/mob/living/simple_animal/hostile/carp,
 				/mob/living/simple_animal/hostile/carp/pike,
@@ -1075,7 +1081,7 @@ obj/random/hostile/spawn_choices()
 /*
 	Selects one spawn point out of a group of points with the same ID and asks it to generate its items
 */
-var/list/multi_point_spawns
+var/global/list/multi_point_spawns
 
 /obj/random_multi
 	name = "random object spawn point"
@@ -1128,8 +1134,8 @@ var/list/multi_point_spawns
 	id = "Captain's spare id"
 	item_path = /obj/item/card/id/captains_spare
 
-var/list/random_junk_
-var/list/random_useful_
+var/global/list/random_junk_
+var/global/list/random_useful_
 /proc/get_random_useful_type()
 	if(!random_useful_)
 		random_useful_ = list()
@@ -1139,7 +1145,7 @@ var/list/random_useful_
 		random_useful_ += /obj/item/pen/red
 		random_useful_ += /obj/item/pen/multi
 		random_useful_ += /obj/item/storage/box/matches
-		random_useful_ += /obj/item/stack/material/cardboard
+		random_useful_ += /obj/item/stack/material/cardstock/mapped/cardboard
 		random_useful_ += /obj/item/storage/fancy/cigarettes
 		random_useful_ += /obj/item/deck/cards
 	return pick(random_useful_)

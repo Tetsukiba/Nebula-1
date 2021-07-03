@@ -1,5 +1,6 @@
-#define AIRLOCK_REGION_PAINT    "Paint"
-#define AIRLOCK_REGION_STRIPE   "Stripe"
+#define PAINT_REGION_PAINT    "Paint"
+#define PAINT_REGION_STRIPE   "Stripe"
+#define PAINT_REGION_WINDOW   "Window"
 
 /obj/item/paint_sprayer
 	name = "paint sprayer"
@@ -88,9 +89,10 @@
 
 /obj/item/paint_sprayer/get_mob_overlay(mob/user_mob, slot, bodypart)
 	var/image/ret = ..()
-	var/bodytype = lowertext(user_mob?.get_bodytype())
-	var/image/overlay = overlay_image(ret.icon, "[bodytype]-slot_[slot]_color", paint_color)
-	ret.add_overlay(overlay)
+	if(ret)
+		var/bodytype = lowertext(user_mob?.get_bodytype_category())
+		var/image/overlay = overlay_image(ret.icon, "[bodytype]-slot_[slot]_color", paint_color)
+		ret.add_overlay(overlay)
 	return ret
 
 /obj/item/paint_sprayer/afterattack(var/atom/A, var/mob/user, var/proximity, var/params)
@@ -105,6 +107,11 @@
 			new_color = pick_color_from_floor(A, user)
 		else if (istype(A, /obj/machinery/door/airlock))
 			new_color = pick_color_from_airlock(A, user)
+		else if (istype(A, /turf/simulated/wall))
+			new_color = pick_color_from_wall(A, user)
+		else if (istype(A, /obj/structure/wall_frame))
+			var/obj/structure/wall_frame/WF = A
+			new_color = pick_color_from_wall_frame(WF, user)
 		else
 			new_color = A.get_color()
 		change_color(new_color, user)
@@ -112,6 +119,9 @@
 	else if (A.atom_flags & ATOM_FLAG_CAN_BE_PAINTED)
 		A.set_color(paint_color)
 		. = TRUE
+
+	else if (istype(A, /turf/simulated/wall))
+		. = paint_wall(A, user)
 
 	else if (istype(A, /turf/simulated/floor))
 		. = paint_floor(A, user, params)
@@ -124,12 +134,84 @@
 		. = FALSE
 
 	else
-		to_chat(user, SPAN_WARNING("\The [src] can only be used on floors, walls, exosuits or certain airlocks."))
+		to_chat(user, SPAN_WARNING("\The [src] can only be used on floors, windows, walls, exosuits or certain airlocks."))
 		. = FALSE
 
 	if (.)
 		playsound(get_turf(src), 'sound/effects/spray3.ogg', 30, 1, -6)
 	return .
+
+
+/obj/item/paint_sprayer/proc/paint_wall(var/turf/simulated/wall/W, var/mob/user)
+	if(istype(W) && (!W.material || !W.material.wall_flags))
+		to_chat(user, SPAN_WARNING("You can't paint this wall type."))
+		return
+	var/choice
+	if(W.material.wall_flags & PAINT_PAINTABLE && W.material.wall_flags & PAINT_STRIPABLE)
+		choice = input(user, "What do you wish to paint?") as null|anything in list(PAINT_REGION_PAINT,PAINT_REGION_STRIPE)
+	else if(W.material.wall_flags & PAINT_PAINTABLE)
+		choice = PAINT_REGION_PAINT
+	else if(W.material.wall_flags & PAINT_STRIPABLE)
+		choice = PAINT_REGION_STRIPE
+	if (user.incapacitated() || !W || !user.Adjacent(W))
+		return FALSE
+	if(choice == PAINT_REGION_PAINT)
+		W.paint_wall(paint_color)
+	else if(choice == PAINT_REGION_STRIPE)
+		W.stripe_wall(paint_color)
+
+
+/obj/item/paint_sprayer/proc/pick_color_from_wall(var/turf/simulated/wall/W, var/mob/user)
+	if (!W.material || !W.material.wall_flags)
+		return FALSE
+
+	switch (select_wall_region(W, user, "Where do you wish to select the color from?"))
+		if (PAINT_REGION_PAINT)
+			return W.paint_color
+		if (PAINT_REGION_STRIPE)
+			return W.stripe_color
+		else
+			return FALSE
+
+
+/obj/item/paint_sprayer/proc/select_wall_region(var/turf/simulated/wall/W, var/mob/user, var/input_text)
+	var/list/choices = list()
+	if (W.material.wall_flags & PAINT_PAINTABLE)
+		choices |= PAINT_REGION_PAINT
+	if (W.material.wall_flags & PAINT_STRIPABLE)
+		choices |= PAINT_REGION_STRIPE
+	var/choice = input(user, input_text) as null|anything in sortTim(choices, /proc/cmp_text_asc)
+	if (user.incapacitated() || !W || !user.Adjacent(W))
+		return FALSE
+	return choice
+
+
+/obj/item/paint_sprayer/proc/paint_wall_frame(var/obj/structure/wall_frame/WF, var/mob/user)
+	var/choice = input(user, "What do you wish to paint?") as null|anything in list(PAINT_REGION_PAINT,PAINT_REGION_STRIPE)
+	if (user.incapacitated() || !WF || !user.Adjacent(WF))
+		return FALSE
+	if(choice == PAINT_REGION_PAINT)
+		WF.paint_wall_frame(paint_color)
+	else if(choice == PAINT_REGION_STRIPE)
+		WF.stripe_wall_frame(paint_color)
+
+
+/obj/item/paint_sprayer/proc/pick_color_from_wall_frame(var/obj/structure/wall_frame/WF, var/mob/user)
+	switch (select_wall_frame_region(WF, user, "Where do you wish to select the color from?"))
+		if (PAINT_REGION_PAINT)
+			return WF.paint_color
+		if (PAINT_REGION_STRIPE)
+			return WF.stripe_color
+		else
+			return FALSE
+
+
+/obj/item/paint_sprayer/proc/select_wall_frame_region(var/obj/structure/wall_frame/WF, var/mob/user, var/input_text)
+	var/list/choices = list(PAINT_REGION_PAINT, PAINT_REGION_STRIPE)
+	var/choice = input(user, input_text) as null|anything in sortTim(choices, /proc/cmp_text_asc)
+	if (user.incapacitated() || !WF || !user.Adjacent(WF))
+		return FALSE
+	return choice
 
 
 /obj/item/paint_sprayer/proc/paint_floor(var/turf/simulated/floor/F, var/mob/user, var/params)
@@ -211,10 +293,12 @@
 		return FALSE
 
 	switch (select_airlock_region(D, user, "What do you wish to paint?"))
-		if (AIRLOCK_REGION_PAINT)
+		if (PAINT_REGION_PAINT)
 			D.paint_airlock(paint_color)
-		if (AIRLOCK_REGION_STRIPE)
+		if (PAINT_REGION_STRIPE)
 			D.stripe_airlock(paint_color)
+		if (PAINT_REGION_WINDOW)
+			D.paint_window(paint_color)
 		else
 			return FALSE
 	return TRUE
@@ -225,22 +309,26 @@
 		return FALSE
 
 	switch (select_airlock_region(D, user, "Where do you wish to select the color from?"))
-		if (AIRLOCK_REGION_PAINT)
+		if (PAINT_REGION_PAINT)
 			return D.door_color
-		if (AIRLOCK_REGION_STRIPE)
+		if (PAINT_REGION_STRIPE)
 			return D.stripe_color
+		if (PAINT_REGION_WINDOW)
+			return D.window_color
 		else
 			return FALSE
 
 
 /obj/item/paint_sprayer/proc/select_airlock_region(var/obj/machinery/door/airlock/D, var/mob/user, var/input_text)
 	var/choice
-	if (D.paintable == AIRLOCK_PAINTABLE)
-		choice = "Paint"
-	else if (D.paintable == AIRLOCK_STRIPABLE)
-		choice = "Stripe"
-	else if (D.paintable == AIRLOCK_PAINTABLE | AIRLOCK_STRIPABLE)
-		choice = input(user, input_text) as null|anything in list("Paint","Stripe")
+	var/list/choices = list()
+	if (D.paintable & PAINT_PAINTABLE)
+		choices |= PAINT_REGION_PAINT
+	if (D.paintable & PAINT_STRIPABLE)
+		choices |= PAINT_REGION_STRIPE
+	if (D.paintable & PAINT_WINDOW_PAINTABLE)
+		choices |= PAINT_REGION_WINDOW
+	choice = input(user, input_text) as null|anything in sortTim(choices, /proc/cmp_text_asc)
 	if (user.incapacitated() || !D || !user.Adjacent(D))
 		return FALSE
 	return choice
@@ -359,5 +447,6 @@
 	playsound(src, 'sound/weapons/flipblade.ogg', 30, 1)
 	update_icon()
 
-#undef AIRLOCK_REGION_PAINT
-#undef AIRLOCK_REGION_STRIPE
+#undef PAINT_REGION_PAINT
+#undef PAINT_REGION_STRIPE
+#undef PAINT_REGION_WINDOW

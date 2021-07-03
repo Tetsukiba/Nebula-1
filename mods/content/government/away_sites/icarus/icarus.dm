@@ -79,11 +79,8 @@
 /obj/item/disk/icarus
 	name = "black box backup disk"
 	desc = "Digital storage. Inscription says: \"Deliver to Sol Goverment Expeditionary Corps Command!\". Content is encrypted with quantum crypthography methods."
-	icon = 'icons/obj/items/device/diskette.dmi'
-	icon_state = "nucleardisk"
-	item_state = "card-id"
-	w_class = ITEM_SIZE_TINY
-
+	color = COLOR_GRAY40
+	label = "label_warning"
 /obj/item/paper/icarus/log
 	name = "Printed piece of paper"
 	info = "\[LOG\]: Orbit stabilized. Next correction burst, est.: 2 hrs 12 m<br>\
@@ -167,13 +164,10 @@
 	icon = 'mods/content/government/away_sites/icarus/icarus_sprites.dmi'
 	icon_state = "solgovseal"
 
-/obj/item/clothing/under/icarus/ec_uniform
+/obj/item/clothing/under/ec_uniform
 	name = "expeditionary uniform"
 	desc = "An older model of the utility uniform of the SCG Expeditionary Corps. It has a patch on the left sleeve signifying the wearer served on the SEV Icarus."
-	icon_state = "blackutility_crew"
-	worn_state = "blackutility_crew"
-	icon = 'mods/content/government/away_sites/icarus/icarus_sprites.dmi'
-	item_icons = list(slot_w_uniform_str = 'mods/content/government/away_sites/icarus/icarus_sprites.dmi')
+	icon = 'icons/clothing/under/uniform_ec.dmi'
 
 /obj/structure/sign/double/icarus/solgovflag
 	name = "Sol Central Government Flag"

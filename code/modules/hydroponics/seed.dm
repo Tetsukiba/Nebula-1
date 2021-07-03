@@ -26,6 +26,7 @@
 	var/force_layer
 	var/req_CO2_moles    = 1.0// Moles of CO2 required for photosynthesis.
 	var/hydrotray_only
+	var/base_seed_value = 5 // Used when generating price.
 
 /datum/seed/New()
 
@@ -70,6 +71,20 @@
 
 	uid = "[sequential_id(/datum/seed/)]"
 
+// TODO integrate other traits.
+/datum/seed/proc/get_monetary_value()
+	. = 1
+	// Positives!
+	. += 3 * set_trait(TRAIT_HARVEST_REPEAT)
+	. += 3 * set_trait(TRAIT_PRODUCES_POWER)
+	. += 5 * get_trait(TRAIT_CARNIVOROUS)
+	. += 5 * get_trait(TRAIT_PARASITE)
+	. += 5 * get_trait(TRAIT_TELEPORTING)
+	// Negatives!
+	. -= 2 * get_trait(TRAIT_STINGS)
+	. -= 2 * get_trait(TRAIT_EXPLOSIVE)
+	. = max(1, round(. * base_seed_value))
+
 /datum/seed/proc/get_trait(var/trait)
 	return traits["[trait]"]
 
@@ -93,7 +108,7 @@
 	if(!T)
 		return
 
-	var/datum/reagents/R = new/datum/reagents(100, GLOB.temp_reagents_holder)
+	var/datum/reagents/R = new/datum/reagents(100, global.temp_reagents_holder)
 	if(chems.len)
 		for(var/rid in chems)
 			var/injecting = min(5,max(1,get_trait(TRAIT_POTENCY)/3))
@@ -194,7 +209,7 @@
 				var/clr
 				if(get_trait(TRAIT_BIOLUM_COLOUR))
 					clr = get_trait(TRAIT_BIOLUM_COLOUR)
-				splat.set_light(0.5, 0.1, 3, l_color = clr)
+				splat.set_light(get_trait(TRAIT_BIOLUM), l_color = clr)
 			var/flesh_colour = get_trait(TRAIT_FLESH_COLOUR)
 			if(!flesh_colour) flesh_colour = get_trait(TRAIT_PRODUCT_COLOUR)
 			if(flesh_colour) splat.color = get_trait(TRAIT_PRODUCT_COLOUR)
@@ -214,7 +229,7 @@
 			var/datum/reagents/R = M.reagents
 			var/mob/living/carbon/human/H = M
 			if(istype(H))
-				R = H.touching
+				R = H.get_contact_reagents()
 			if(istype(R))
 				for(var/chem in chems)
 					R.add_reagent(chem,min(5,max(1,get_trait(TRAIT_POTENCY)/3)))
@@ -242,7 +257,7 @@
 			closed_turfs |= T
 			valid_turfs |= T
 
-			for(var/dir in GLOB.alldirs)
+			for(var/dir in global.alldirs)
 				var/turf/neighbor = get_step(T,dir)
 				if(!neighbor || (neighbor in closed_turfs) || (neighbor in open_turfs))
 					continue
@@ -361,9 +376,7 @@
 
 		var/turf/T = get_random_turf_in_range(target, outer_teleport_radius, inner_teleport_radius)
 		if(T)
-			var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
-			s.set_up(3, 1, get_turf(target))
-			s.start()
+			spark_at(target, cardinal_only = TRUE)
 			new/obj/effect/decal/cleanable/molten_item(get_turf(target)) // Leave a pile of goo behind for dramatic effect...
 			target.forceMove(T)                                     // And teleport them to the chosen location.
 			impact = 1
@@ -462,6 +475,7 @@
 
 	if(additional_chems)
 		var/list/banned_chems = list(
+			/decl/material/placeholder,
 			/decl/material/liquid/adminordrazine,
 			/decl/material/liquid/nutriment,
 			/decl/material/liquid/weedkiller
@@ -474,7 +488,7 @@
 
 		if(prob(30))
 			for(var/R in subtypesof(/decl/material))
-				var/decl/material/mat = decls_repository.get_decl(R)
+				var/decl/material/mat = GET_DECL(R)
 				if(mat.toxicity)
 					banned_chems |= R
 
@@ -725,7 +739,7 @@
 		if(istype(user)) to_chat(user, "You [harvest_sample ? "take a sample" : "harvest"] from the [display_name].")
 		//This may be a new line. Update the global if it is.
 		if(name == "new line" || !(name in SSplants.seeds))
-			uid = SSplants.seeds.len + 1
+			uid = sequential_id(/datum/seed/)
 			name = "[uid]"
 			SSplants.seeds[name] = src
 
@@ -766,7 +780,7 @@
 				var/clr
 				if(get_trait(TRAIT_BIOLUM_COLOUR))
 					clr = get_trait(TRAIT_BIOLUM_COLOUR)
-				product.set_light(0.5, 0.1, 3, l_color = clr)
+				product.set_light(get_trait(TRAIT_BIOLUM), l_color = clr)
 
 			//Handle spawning in living, mobile products.
 			if(istype(product,/mob/living))

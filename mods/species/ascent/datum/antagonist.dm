@@ -14,6 +14,7 @@
 	hard_cap_round = 10
 	initial_spawn_req = 4
 	initial_spawn_target = 6
+	rig_type = /obj/item/rig/mantid
 
 /decl/special_role/hunter/update_antag_mob(var/datum/mind/player, var/preserve_appearance)
 	. = ..()
@@ -25,23 +26,23 @@
 			leader = player
 			if(H.species.get_root_species_name() != SPECIES_MANTID_GYNE)
 				H.set_species(SPECIES_MANTID_GYNE)
-			H.gender = FEMALE
+			H.set_gender(FEMALE)
 		else
 			if(H.species.get_root_species_name() != SPECIES_MANTID_ALATE)
 				H.set_species(SPECIES_MANTID_ALATE)
-			H.gender = MALE
-		var/decl/cultural_info/culture/ascent/ascent_culture = SSlore.get_culture(CULTURE_ASCENT)
+			H.set_gender(MALE)
+		var/decl/cultural_info/culture/ascent/ascent_culture = GET_DECL(/decl/cultural_info/culture/ascent)
 		H.real_name = ascent_culture.get_random_name(H, H.gender)
 		H.name = H.real_name
 
 /decl/special_role/hunter/equip(var/mob/living/carbon/human/player)
+	if(player?.species.get_root_species_name(player) == SPECIES_MANTID_GYNE)
+		rig_type = /obj/item/rig/mantid/gyne
+	else
+		rig_type = initial(rig_type)
 	. = ..()
 	if(.)
-		if(player.species.get_root_species_name(player) == SPECIES_MANTID_GYNE)
-			equip_rig(/obj/item/rig/mantid/gyne, player)
-		else
-			equip_rig(/obj/item/rig/mantid, player)
-			player.put_in_hands(new /obj/item/gun/energy/particle)
+		player.put_in_hands(new /obj/item/gun/energy/particle)
 
 /decl/special_role/hunter/equip_rig(rig_type, mob/living/carbon/human/player)
 	var/obj/item/rig/mantid/rig = ..()

@@ -81,8 +81,8 @@
 			job.apply_fingerprints(character)
 			var/list/spawn_in_storage = SSjobs.equip_custom_loadout(character, job)
 			if(spawn_in_storage)
-				for(var/datum/gear/G in spawn_in_storage)
-					G.spawn_in_storage_or_drop(user_human, user_human.client.prefs.Gear()[G.display_name])
+				for(var/decl/loadout_option/G in spawn_in_storage)
+					G.spawn_in_storage_or_drop(user_human, user_human.client.prefs.Gear()[G.name])
 			SScustomitems.equip_custom_items(user_human)
 
 		character.job = job.title
@@ -110,7 +110,7 @@
 		BITSET(character.hud_updateflag, SPECIALROLE_HUD)
 
 		SSticker.mode.handle_offsite_latejoin(character)
-		GLOB.universe.OnPlayerLatejoin(character)
+		global.universe.OnPlayerLatejoin(character)
 		log_and_message_admins("has joined the round as offsite role [character.mind.assigned_role].", character)
 		if(character.cannot_stand()) equip_wheelchair(character)
 		job.post_equip_rank(character, job.title)

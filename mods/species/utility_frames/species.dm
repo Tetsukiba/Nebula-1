@@ -1,17 +1,24 @@
+/datum/appearance_descriptor/age/utility_frame
+	chargen_min_index = 1
+	chargen_max_index = 4
+	standalone_value_descriptors = list(
+		"brand new" =            1,
+		"worn" =                 5,
+		"an older model" =      12,
+		"nearing end-of-life" = 16,
+		"entirely obsolete" =   20
+	)
+	
 /decl/species/utility_frame
 	name =                  SPECIES_FRAME
 	name_plural =           "Utility Frames"
 	description =           "Simple AI-driven robots are used for many menial or repetitive tasks in human space."
-	icobase =               'mods/species/utility_frames/icons/body.dmi'
-	deform =                'mods/species/utility_frames/icons/body.dmi'
 	preview_icon =          'mods/species/utility_frames/icons/preview.dmi'
-	limb_blend =            ICON_MULTIPLY
 	cyborg_noun = null
 
-	min_age =               1
-	max_age =               20
+	available_bodytypes = list(/decl/bodytype/utility_frame)
+	age_descriptor =        /datum/appearance_descriptor/age/utility_frame
 	hidden_from_codex =     FALSE
-	bodytype =              BODYTYPE_HUMANOID
 	species_flags =         SPECIES_FLAG_NO_PAIN | SPECIES_FLAG_NO_SCAN | SPECIES_FLAG_NO_POISON
 	spawn_flags =           SPECIES_CAN_JOIN
 	appearance_flags =      HAS_SKIN_COLOR | HAS_EYE_COLOR
@@ -39,12 +46,12 @@
 		/decl/natural_attack/kick,
 		/decl/natural_attack/punch
 	)
-	genders = list(
-		NEUTER,
-		PLURAL
+	available_pronouns = list(
+		/decl/pronouns,
+		/decl/pronouns/neuter
 	)
 	available_cultural_info = list(
-		TAG_CULTURE = list(CULTURE_SYNTHETIC)
+		TAG_CULTURE = list(/decl/cultural_info/culture/synthetic)
 	)
 	has_organ = list(
 		BP_POSIBRAIN = /obj/item/organ/internal/posibrain,
@@ -58,16 +65,10 @@
 		/decl/emote/exertion/synthetic/creak
 	)
 
-	inherent_verbs = list(
-		/mob/living/carbon/human/proc/detach_limb,
-		/mob/living/carbon/human/proc/attach_limb,
-		/mob/living/carbon/human/proc/eyeglow
-	)
-
 /decl/species/utility_frame/post_organ_rejuvenate(obj/item/organ/org, mob/living/carbon/human/H)
 	var/obj/item/organ/external/E = org
 	if(istype(E) && !BP_IS_PROSTHETIC(E))
-		E.robotize(SPECIES_FRAME)
+		E.robotize(/decl/prosthetics_manufacturer/utility_frame)
 	var/obj/item/organ/external/head/head = org
 	if(istype(head))
 		head.glowing_eyes = TRUE

@@ -30,11 +30,11 @@
 /decl/ghosttrap/proc/request_player(var/mob/target, var/request_string, var/request_timeout)
 	if(request_timeout)
 		LAZYSET(request_timeouts, target, world.time + request_timeout)
-		GLOB.destroyed_event.register(target, src, /decl/ghosttrap/proc/unregister_target)
+		events_repository.register(/decl/observ/destroyed, target, src, /decl/ghosttrap/proc/unregister_target)
 	else
 		unregister_target(target)
 
-	for(var/mob/O in GLOB.player_list)
+	for(var/mob/O in global.player_list)
 		if(!assess_candidate(O, target, FALSE))
 			return
 		if(pref_check && !O.client.wishes_to_be_role(pref_check))
@@ -44,7 +44,7 @@
 
 /decl/ghosttrap/proc/unregister_target(var/target)
 	LAZYREMOVE(request_timeouts, target)
-	GLOB.destroyed_event.unregister(target, src, /decl/ghosttrap/proc/unregister_target)
+	events_repository.unregister(/decl/observ/destroyed, target, src, /decl/ghosttrap/proc/unregister_target)
 
 // Handles a response to request_player().
 /decl/ghosttrap/Topic(href, href_list)
@@ -189,7 +189,7 @@
 	var/obj/item/soulstone/S = target.loc
 	if(istype(S))
 		if(S.is_evil)
-			var/decl/special_role/cult = decls_repository.get_decl(/decl/special_role/cultist)
+			var/decl/special_role/cult = GET_DECL(/decl/special_role/cultist)
 			cult.add_antagonist(target.mind)
 			to_chat(target, "<b>Remember, you serve the one who summoned you first, and the cult second.</b>")
 		else

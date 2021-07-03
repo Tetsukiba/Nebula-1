@@ -1,5 +1,3 @@
-GLOBAL_LIST_INIT(bitflags, list(1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768))
-
 #define CLOSET_HAS_LOCK  1
 #define CLOSET_CAN_BE_WELDED 2
 
@@ -22,6 +20,7 @@ GLOBAL_LIST_INIT(bitflags, list(1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 204
 #define ATOM_FLAG_SHOW_REAGENT_NAME       BITFLAG(8) // Reagent presentation name is attached to the atom name
 #define ATOM_FLAG_CAN_BE_PAINTED          BITFLAG(9) // Can be painted using a paint sprayer or similar.
 #define ATOM_FLAG_SHIELD_CONTENTS         BITFLAG(10)// Protects contents from some global effects (Solar storms)
+#define ATOM_FLAG_ADJACENT_EXCEPTION      BITFLAG(11)// Skips adjacent checks for atoms that should always be reachable in window tiles
 
 #define ATOM_IS_CONTAINER(A)              (A.atom_flags & ATOM_FLAG_CONTAINER)
 #define ATOM_IS_OPEN_CONTAINER(A)         (A.atom_flags & ATOM_FLAG_OPEN_CONTAINER)
@@ -30,7 +29,6 @@ GLOBAL_LIST_INIT(bitflags, list(1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 204
 #define MOVABLE_FLAG_Z_INTERACT           BITFLAG(1) // Should attackby and attack_hand be relayed through ladders and open spaces?
 #define MOVABLE_FLAG_EFFECTMOVE           BITFLAG(2) // Is this an effect that should move?
 #define MOVABLE_FLAG_DEL_SHUTTLE          BITFLAG(3) // Shuttle transistion will delete this.
-#define MOVABLE_FLAG_NONDENSE_COLLISION   BITFLAG(4) // Used for non-dense movables that should be capable of colliding when attempting to move onto dense atoms
 
 #define OBJ_FLAG_ANCHORABLE               BITFLAG(0) // This object can be stuck in place with a tool
 #define OBJ_FLAG_CONDUCTIBLE              BITFLAG(1) // Conducts electricity. (metal etc.)
@@ -52,11 +50,13 @@ GLOBAL_LIST_INIT(bitflags, list(1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 204
 #define ITEM_FLAG_NOCUFFS                 BITFLAG(11) // Gloves that have this flag prevent cuffs being applied
 #define ITEM_FLAG_CAN_HIDE_IN_SHOES       BITFLAG(12) // Items that can be hidden in shoes that permit it
 #define ITEM_FLAG_PADDED                  BITFLAG(13) // When set on gloves, will act like pulling punches in unarmed combat.
+#define ITEM_FLAG_HOLLOW                  BITFLAG(14) // Modifies initial matter values to be lower than w_class normally sets.
 
 // Flags for pass_flags.
 #define PASS_FLAG_TABLE                   BITFLAG(0)
 #define PASS_FLAG_GLASS                   BITFLAG(1)
 #define PASS_FLAG_GRILLE                  BITFLAG(2)
+#define PASS_FLAG_MOB                     BITFLAG(3)
 
 // Sector Flags.
 #define OVERMAP_SECTOR_BASE               BITFLAG(0) // Whether or not this sector is a starting sector. Z levels contained in this sector are added to station_levels

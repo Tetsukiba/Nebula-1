@@ -1,7 +1,7 @@
-GLOBAL_LIST_INIT(symbiote_starting_points, new)
+var/global/list/symbiote_starting_points = list()
 
 /decl/cultural_info/culture/symbiotic
-	name = CULTURE_SYMBIOTIC
+	name = "Symbiote Host"
 	description = "Your culture has always welcomed a form of brain-slug called cortical borers into their bodies, \
 	and your upbringing taught that this was a normal and beneficial state of affairs. Taking this background will \
 	allow symbiote players to join as your mind-partner. Symbiotes can secrete beneficial chemicals, translate languages \
@@ -11,7 +11,10 @@ GLOBAL_LIST_INIT(symbiote_starting_points, new)
 
 /datum/job/symbiote
 	title = "Symbiote"
-	department_refs = list(DEPT_CIVILIAN, DEPT_SCIENCE)
+	department_types = list(
+		/decl/department/civilian,
+		/decl/department/science
+	)
 	total_positions = -1
 	spawn_positions = -1
 	supervisors = "your host"
@@ -82,10 +85,10 @@ GLOBAL_LIST_INIT(symbiote_starting_points, new)
 		symbiote.host_brain.real_name = host.real_name
 	else
 		to_chat(symbiote, SPAN_DANGER("There are no longer any hosts available, so you are being placed in a safe area."))
-		if(length(GLOB.symbiote_starting_points))
-			symbiote.forceMove(pick(GLOB.symbiote_starting_points))
+		if(length(global.symbiote_starting_points))
+			symbiote.forceMove(pick(global.symbiote_starting_points))
 		else
-			symbiote.forceMove(pick(GLOB.latejoin))
+			symbiote.forceMove(pick(global.latejoin_locations))
 
 	if(H.mind)
 		H.mind.transfer_to(symbiote)
@@ -102,8 +105,8 @@ GLOBAL_LIST_INIT(symbiote_starting_points, new)
 
 /datum/job/symbiote/proc/find_valid_hosts(var/just_checking)
 	. = list()
-	for(var/mob/living/carbon/human/H in GLOB.player_list)
-		if(H.stat == DEAD || !H.client || !H.ckey || !H.internal_organs_by_name[BP_BRAIN])
+	for(var/mob/living/carbon/human/H in global.player_list)
+		if(H.stat == DEAD || !H.client || !H.ckey || !H.has_brain())
 			continue
 		var/obj/item/organ/external/head = H.get_organ(BP_HEAD)
 		if(BP_IS_PROSTHETIC(head) || BP_IS_CRYSTAL(head) || head.has_growths())
@@ -123,5 +126,5 @@ GLOBAL_LIST_INIT(symbiote_starting_points, new)
 	delete_me = TRUE
 
 /obj/effect/landmark/symbiote_start/Initialize()
-	GLOB.symbiote_starting_points |= get_turf(src)
+	global.symbiote_starting_points |= get_turf(src)
 	. = ..()

@@ -21,7 +21,7 @@
 
 /obj/effect/rune/on_update_icon()
 	overlays.Cut()
-	var/decl/special_role/cultist/cult = decls_repository.get_decl(/decl/special_role/cultist)
+	var/decl/special_role/cultist/cult = GET_DECL(/decl/special_role/cultist)
 	if(cult.rune_strokes[type])
 		var/list/f = cult.rune_strokes[type]
 		for(var/i in f)
@@ -45,7 +45,7 @@
 	if(iscultist(user))
 		to_chat(user, "This is \a [cultname] rune.")
 
-/obj/effect/rune/attackby(var/obj/item/I, var/mob/living/user)
+/obj/effect/rune/attackby(var/obj/item/I, var/mob/user)
 	if(istype(I, /obj/item/book/tome) && iscultist(user))
 		user.visible_message("<span class='notice'>[user] rubs \the [src] with \the [I], and \the [src] is absorbed by it.</span>", "You retrace your steps, carefully undoing the lines of \the [src].")
 		qdel(src)
@@ -55,20 +55,20 @@
 		qdel(src)
 		return
 
-/obj/effect/rune/attack_hand(var/mob/living/user)
+/obj/effect/rune/attack_hand(var/mob/user)
 	if(!iscultist(user))
 		to_chat(user, "You can't mouth the arcane scratchings without fumbling over them.")
 		return
-	if(user.is_muzzled() || user.silent)
+	if(user.is_silenced())
 		to_chat(user, "You are unable to speak the words of the rune.")
 		return
-	var/decl/special_role/cultist/cult = decls_repository.get_decl(/decl/special_role/cultist)
+	var/decl/special_role/cultist/cult = GET_DECL(/decl/special_role/cultist)
 	if(cult.powerless)
 		to_chat(user, "You read the words, but nothing happens.")
 		return fizzle(user)
 	cast(user)
 
-/obj/effect/rune/attack_ai(var/mob/living/user) // Cult borgs!
+/obj/effect/rune/attack_ai(var/mob/user) // Cult borgs!
 	if(Adjacent(user))
 		attack_hand(user)
 
@@ -86,7 +86,7 @@
 
 //Makes the speech a proc so all verbal components can be easily manipulated as a whole, or individually easily
 /obj/effect/rune/proc/speak_incantation(var/mob/living/user, var/incantation)
-	var/decl/language/L = decls_repository.get_decl(/decl/language/cultcommon)
+	var/decl/language/L = GET_DECL(/decl/language/cultcommon)
 	if(istype(L) && incantation && (L in user.languages))
 		user.say(incantation, L)
 
@@ -113,7 +113,7 @@
 	target.visible_message("<span class='warning'>The markings below [target] glow a bloody red.</span>")
 
 	to_chat(target, "<span class='cult'>Your blood pulses. Your head throbs. The world goes red. All at once you are aware of a horrible, horrible truth. The veil of reality has been ripped away and in the festering wound left behind something sinister takes root.</span>")
-	var/decl/special_role/cult = decls_repository.get_decl(/decl/special_role/cultist)
+	var/decl/special_role/cult = GET_DECL(/decl/special_role/cultist)
 	if(!cult.can_become_antag(target.mind, 1))
 		to_chat(target, "<span class='danger'>Are you going insane?</span>")
 	else
@@ -140,7 +140,7 @@
 
 /obj/effect/rune/convert/Topic(href, href_list)
 	if(href_list["join"] && usr.loc == loc && !iscultist(usr))
-		var/decl/special_role/cult = decls_repository.get_decl(/decl/special_role/cultist)
+		var/decl/special_role/cult = GET_DECL(/decl/special_role/cultist)
 		cult.add_antagonist(usr.mind, ignore_role = 1, do_not_equip = 1)
 
 /obj/effect/rune/teleport
@@ -151,11 +151,11 @@
 	. = ..()
 	var/area/A = get_area(src)
 	destination = A.name
-	var/decl/special_role/cultist/cult = decls_repository.get_decl(/decl/special_role/cultist)
+	var/decl/special_role/cultist/cult = GET_DECL(/decl/special_role/cultist)
 	cult.teleport_runes += src
 
 /obj/effect/rune/teleport/Destroy()
-	var/decl/special_role/cultist/cult = decls_repository.get_decl(/decl/special_role/cultist)
+	var/decl/special_role/cultist/cult = GET_DECL(/decl/special_role/cultist)
 	cult.teleport_runes -= src
 	var/turf/T = get_turf(src)
 	for(var/atom/movable/A in contents)
@@ -212,7 +212,7 @@
 
 /obj/effect/rune/teleport/proc/showOptions(var/mob/living/user)
 	var/list/t = list()
-	var/decl/special_role/cultist/cult = decls_repository.get_decl(/decl/special_role/cultist)
+	var/decl/special_role/cultist/cult = GET_DECL(/decl/special_role/cultist)
 	for(var/obj/effect/rune/teleport/T in cult.teleport_runes)
 		if(T == src)
 			continue
@@ -294,14 +294,14 @@
 		else
 			to_chat(user, "<span class='danger'>It is about to dissipate.</span>")
 
-/obj/effect/cultwall/attack_hand(var/mob/living/user)
+/obj/effect/cultwall/attack_hand(var/mob/user)
 	if(iscultist(user))
 		user.visible_message("<span class='notice'>\The [user] touches \the [src], and it fades.</span>", "<span class='notice'>You touch \the [src], whispering the old ritual, making it disappear.</span>")
 		qdel(src)
 	else
 		to_chat(user, "<span class='notice'>You touch \the [src]. It feels wet and becomes harder the further you push your arm.</span>")
 
-/obj/effect/cultwall/attackby(var/obj/item/I, var/mob/living/user)
+/obj/effect/cultwall/attackby(var/obj/item/I, var/mob/user)
 	if(istype(I, /obj/item/nullrod))
 		user.visible_message("<span class='notice'>\The [user] touches \the [src] with \the [I], and it disappears.</span>", "<span class='notice'>You disrupt the vile magic with the deadening field of \the [I].</span>")
 		qdel(src)
@@ -331,10 +331,16 @@
 	if(user.loc != get_turf(src))
 		return
 	speak_incantation(user, "Fwe[pick("'","`")]sh mah erl nyag r'ya!")
-	user.visible_message("<span class='warning'>\The [user]'s eyes glow blue as \he freezes in place, absolutely motionless.</span>", "<span class='warning'>The shadow that is your spirit separates itself from your body. You are now in the realm beyond. While this is a great sight, being here strains your mind and body. Hurry...</span>", "You hear only complete silence for a moment.")
+	var/decl/pronouns/G = user.get_pronouns()
+
+	user.visible_message( \
+		SPAN_NOTICE("\The [user]'s eyes glow blue as [G.he] freeze[G.s] in place, absolutely motionless."), \
+		SPAN_OCCULT("The shadow that is your spirit separates itself from your body. You are now in the realm beyond. While this is a great sight, being here strains your mind and body. Hurry..."), \
+		SPAN_NOTICE("You hear only complete silence for a moment."))
+
 	announce_ghost_joinleave(user.ghostize(1), 1, "You feel that they had to use some [pick("dark", "black", "blood", "forgotten", "forbidden")] magic to [pick("invade", "disturb", "disrupt", "infest", "taint", "spoil", "blight")] this place!")
 	var/mob/observer/ghost/soul
-	for(var/mob/observer/ghost/O in GLOB.ghost_mob_list)
+	for(var/mob/observer/ghost/O in global.ghost_mob_list)
 		if(O.key == tmpkey)
 			soul = O
 			break
@@ -458,14 +464,15 @@
 		//T.turf_animation('icons/effects/effects.dmi', "rune_sac")
 		victim.fire_stacks = max(2, victim.fire_stacks)
 		victim.IgniteMob()
-		victim.take_organ_damage(2 + casters.len, 2 + casters.len) // This is to speed up the process and also damage mobs that don't take damage from being on fire, e.g. borgs
+		var/dam_amt = 2 + length(casters)
+		victim.take_organ_damage(dam_amt, dam_amt) // This is to speed up the process and also damage mobs that don't take damage from being on fire, e.g. borgs
 		if(ishuman(victim))
 			var/mob/living/carbon/human/H = victim
 			if(H.is_asystole())
 				H.adjustBrainLoss(2 + casters.len)
 		sleep(40)
 	if(victim && victim.loc == T && victim.stat == DEAD)
-		var/decl/special_role/cultist/cult = decls_repository.get_decl(/decl/special_role/cultist)
+		var/decl/special_role/cultist/cult = GET_DECL(/decl/special_role/cultist)
 		cult.add_cultiness(CULTINESS_PER_SACRIFICE)
 		var/obj/item/soulstone/full/F = new(get_turf(src))
 		for(var/mob/M in cultists | get_cultists())
@@ -532,7 +539,7 @@
 	var/use
 	use = min(charges, user.species.blood_volume - user.vessel.total_volume)
 	if(use > 0)
-		user.vessel.add_reagent(user.species.blood_reagent, use)
+		user.adjust_blood(use)
 		charges -= use
 		statuses += "you regain lost blood"
 		if(!charges)
@@ -641,14 +648,14 @@
 		to_chat(user, "<span class='warning'>This rune needs to be placed on the defiled ground.</span>")
 		return fizzle(user)
 
-	var/obj/item/stack/material/steel/target
-	for(var/obj/item/stack/material/steel/S in get_turf(src))
-		if(S.get_amount() >= 10)
+	var/obj/item/stack/material/target
+	for(var/obj/item/stack/material/S in get_turf(src))
+		if(S.material?.type == /decl/material/solid/metal/steel && S.get_amount() >= 10)
 			target = S
 			break
 
 	if(!target)
-		to_chat(user, "<span class='warning'>You need ten sheets of metal to fold them into a construct shell.</span>")
+		to_chat(user, "<span class='warning'>You need ten sheets of steel to fold them into a construct shell.</span>")
 		return fizzle(user)
 
 	speak_incantation(user, "Da A[pick("'","`")]ig Osk!")
@@ -674,11 +681,11 @@
 		affected |= M
 		if(iscarbon(M))
 			var/mob/living/carbon/C = M
-			C.eye_blurry += 50
-			C.Weaken(3)
-			C.Stun(5)
+			SET_STATUS_MAX(C, STAT_BLURRY, 50)
+			SET_STATUS_MAX(C, STAT_WEAK, 3)
+			SET_STATUS_MAX(C, STAT_STUN, 5)
 		else if(issilicon(M))
-			M.Weaken(10)
+			SET_STATUS_MAX(M, STAT_WEAK, 10)
 
 	admin_attacker_log_many_victims(user, affected, "Used a confuse rune.", "Was victim of a confuse rune.", "used a confuse rune on")
 	qdel(src)
@@ -707,7 +714,12 @@
 	target.rejuvenate()
 	source.set_full(0)
 	speak_incantation(user, "Pasnar val'keriam usinar. Savrae ines amutan. Yam'toth remium il'tarat!")
-	target.visible_message("<span class='warning'>\The [target]'s eyes glow with a faint red as \he stands up, slowly starting to breathe again.</span>", "<span class='warning'>Life... I'm alive again...</span>", "You hear liquid flow.")
+
+	var/decl/pronouns/G = target.get_pronouns()
+	target.visible_message( \
+		SPAN_OCCULT("\The [target]'s eyes glow with a faint red as [G.he] stand[G.s] up, slowly starting to breathe again."), \
+		SPAN_OCCULT("Life... I'm alive again..."), \
+		"You hear a flowing liquid.")
 
 /obj/effect/rune/blood_boil
 	cultname = "blood boil"
@@ -752,7 +764,7 @@
 	strokes = 9
 
 /obj/effect/rune/tearreality/cast(var/mob/living/user)
-	var/decl/special_role/cultist/cult = decls_repository.get_decl(/decl/special_role/cultist)
+	var/decl/special_role/cultist/cult = GET_DECL(/decl/special_role/cultist)
 	if(!cult.allow_narsie)
 		return
 	if(the_end_comes)
@@ -793,7 +805,7 @@
 		command_announcement.Announce("Gravitational anomaly has ceased.")
 		qdel(src)
 
-/obj/effect/rune/tearreality/attack_hand(var/mob/living/user)
+/obj/effect/rune/tearreality/attack_hand(var/mob/user)
 	..()
 	if(HECOMES && !iscultist(user))
 		var/input = input(user, "Are you SURE you want to sacrifice yourself?", "DO NOT DO THIS") in list("Yes", "No")
@@ -801,14 +813,15 @@
 			return
 		speak_incantation(user, "Uhrast ka'hfa heldsagen ver[pick("'","`")]lot!")
 		to_chat(user, "<span class='warning'>In the last moment of your humble life, you feel an immense pain as fabric of reality mends... with your blood.</span>")
-		for(var/mob/M in GLOB.living_mob_list_)
+		for(var/mob/M in global.living_mob_list_)
 			if(iscultist(M))
-				to_chat(M, "You see a vision of \the [user] keeling over dead, his blood glowing blue as it escapes \his body and dissipates into thin air; you hear an otherwordly scream and feel that a great disaster has just been averted.")
+				var/decl/pronouns/G = user.get_pronouns()
+				to_chat(M, "You see a vision of \the [user] keeling over dead, his blood glowing blue as it escapes [G.his] body and dissipates into thin air; you hear an otherwordly scream and feel that a great disaster has just been averted.")
 			else
 				to_chat(M, "You see a vision of [name] keeling over dead, his blood glowing blue as it escapes his body and dissipates into thin air; you hear an otherwordly scream and feel very weak for a moment.")
 		log_and_message_admins("mended reality with the greatest sacrifice", user)
 		user.dust()
-		var/decl/special_role/cultist/cult = decls_repository.get_decl(/decl/special_role/cultist)
+		var/decl/special_role/cultist/cult = GET_DECL(/decl/special_role/cultist)
 		cult.powerless = 1
 		qdel(HECOMES)
 		qdel(src)

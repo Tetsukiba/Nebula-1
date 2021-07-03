@@ -4,8 +4,6 @@
 	name = "asteroid station"
 	desc = "A small station built into an asteroid. No radio traffic detected."
 	icon_state = "object"
-	known = 0
-
 	initial_generic_waypoints = list(
 		"nav_smugglers",
 		"nav_smugglers_antag"
@@ -80,8 +78,8 @@
 /obj/random/ore
 	name = "random ore"
 	desc = "This is a random ore."
-	icon = 'icons/obj/clothing/obj_accessories.dmi'
-	icon_state = "horribletie"
+	icon_state = "lump"
+	icon = 'icons/obj/materials/ore.dmi'
 
 /obj/random/ore_smug/spawn_choices()
 	return subtypesof(/obj/item/ore)

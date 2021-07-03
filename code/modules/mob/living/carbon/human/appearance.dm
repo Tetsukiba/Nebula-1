@@ -1,4 +1,4 @@
-/mob/living/carbon/human/proc/change_appearance(var/flags = APPEARANCE_ALL_HAIR, var/location = src, var/mob/user = src, var/check_species_whitelist = 1, var/list/species_whitelist = list(), var/list/species_blacklist = list(), var/datum/topic_state/state = GLOB.default_state)
+/mob/living/carbon/human/proc/change_appearance(var/flags = APPEARANCE_ALL_HAIR, var/location = src, var/mob/user = src, var/check_species_whitelist = 1, var/list/species_whitelist = list(), var/list/species_blacklist = list(), var/datum/topic_state/state = global.default_topic_state)
 	var/datum/nano_module/appearance_changer/AC = new(location, src, check_species_whitelist, species_whitelist, species_blacklist)
 	AC.flags = flags
 	AC.ui_interact(user, state = state)
@@ -21,18 +21,16 @@
 	reset_hair()
 	return 1
 
-/mob/living/carbon/human/proc/change_gender(var/gender)
-	if(src.gender == gender)
-		return
-
-	src.gender = gender
-	reset_hair()
-	update_body()
-	update_dna()
-	return 1
+/mob/living/carbon/human/set_gender(var/new_gender, var/update_body = FALSE)
+	. = ..()
+	if(. && update_body)
+		reset_hair()
+		update_body()
+		update_dna()
 
 /mob/living/carbon/human/proc/randomize_gender()
-	change_gender(pick(species.genders))
+	var/decl/pronouns/pronouns = pick(species.available_pronouns)
+	set_gender(pronouns.name, TRUE)
 
 /mob/living/carbon/human/proc/change_hair(var/hair_style)
 	if(!hair_style)
@@ -41,7 +39,7 @@
 	if(h_style == hair_style)
 		return
 
-	if(!(hair_style in GLOB.hair_styles_list))
+	if(!(hair_style in global.hair_styles_list))
 		return
 
 	h_style = hair_style
@@ -56,7 +54,7 @@
 	if(f_style == facial_hair_style)
 		return
 
-	if(!(facial_hair_style in GLOB.facial_hair_styles_list))
+	if(!(facial_hair_style in global.facial_hair_styles_list))
 		return
 
 	f_style = facial_hair_style

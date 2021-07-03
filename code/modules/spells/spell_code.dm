@@ -1,4 +1,4 @@
-var/list/spells = typesof(/spell) //needed for the badmin verb for now
+var/global/list/spells = typesof(/spell) //needed for the badmin verb for now
 
 /spell
 	var/name = "Spell"
@@ -159,11 +159,11 @@ var/list/spells = typesof(/spell) //needed for the badmin verb for now
 		if("brainloss")
 			target.adjustBrainLoss(amount)
 		if("stunned")
-			target.AdjustStunned(amount)
+			ADJ_STATUS(target, STAT_STUN, amount)
 		if("weakened")
-			target.AdjustWeakened(amount)
+			ADJ_STATUS(target, STAT_WEAK, amount)
 		if("paralysis")
-			target.AdjustParalysis(amount)
+			ADJ_STATUS(target, STAT_PARA, amount)
 		else
 			target.vars[type] += amount //I bear no responsibility for the runtimes that'll happen if you try to adjust non-numeric or even non-existant vars
 	return
@@ -196,9 +196,7 @@ var/list/spells = typesof(/spell) //needed for the badmin verb for now
 		if(istype(target,/mob/living) && message)
 			to_chat(target, text("[message]"))
 		if(sparks_spread)
-			var/datum/effect/effect/system/spark_spread/sparks = new /datum/effect/effect/system/spark_spread()
-			sparks.set_up(sparks_amt, 0, location) //no idea what the 0 is
-			sparks.start()
+			spark_at(location, amount = sparks_amt)
 		if(smoke_spread)
 			if(smoke_spread == 1)
 				var/datum/effect/effect/system/smoke_spread/smoke = new /datum/effect/effect/system/smoke_spread()
@@ -228,7 +226,7 @@ var/list/spells = typesof(/spell) //needed for the badmin verb for now
 	if(!user_turf)
 		to_chat(user, "<span class='warning'>You cannot cast spells in null space!</span>")
 
-	if((spell_flags & Z2NOCAST) && (user_turf.z in GLOB.using_map.admin_levels)) //Certain spells are not allowed on the centcomm zlevel
+	if((spell_flags & Z2NOCAST) && (user_turf.z in global.using_map.admin_levels)) //Certain spells are not allowed on the centcomm zlevel
 		return 0
 
 	if(spell_flags & CONSTRUCT_CHECK)

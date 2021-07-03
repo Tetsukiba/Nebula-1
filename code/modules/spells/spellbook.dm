@@ -6,7 +6,7 @@
 
 //spells/spellbooks have a variable for this but as artefacts are literal items they do not.
 //so we do this instead.
-var/list/artefact_feedback = list(/obj/structure/closet/wizard/armor = 		"HS",
+var/global/list/artefact_feedback = list(/obj/structure/closet/wizard/armor = 		"HS",
 								/obj/item/gun/energy/staff/focus = 	"MF",
 								/obj/item/summoning_stone = 			"ST",
 								/obj/item/magic_rock = 				"RA",
@@ -64,8 +64,10 @@ var/list/artefact_feedback = list(/obj/structure/closet/wizard/armor = 		"HS",
 		to_chat(user, SPAN_WARNING("\The [src] is already sated! Wait for a return on your investment before you sacrifice more to it."))
 		return
 	if(reagent)
-		var/datum/reagents/R = I.reagents
-		R.remove_reagent(reagent,5)
+		if(I.reagents?.has_reagent(reagent, 5))
+			I.reagents.remove_reagent(reagent, 5)
+		else if(LAZYACCESS(I.matter, reagent) >= (SHEET_MATERIAL_AMOUNT * 5))
+			qdel(I)
 	else
 		if(istype(I,/obj/item/stack))
 			var/obj/item/stack/S = I
@@ -80,18 +82,21 @@ var/list/artefact_feedback = list(/obj/structure/closet/wizard/armor = 		"HS",
 
 /obj/item/spellbook/attackby(obj/item/I, mob/user)
 	if(investing_time)
-		var/list/objects = spellbook.sacrifice_objects
-		if(objects && objects.len)
-			for(var/type in objects)
-				if(istype(I,type))
-					make_sacrifice(I,user)
-					return
+		for(var/type in spellbook.sacrifice_objects)
+			if(istype(I,type))
+				make_sacrifice(I, user)
+				return TRUE
+
+		for(var/mat in spellbook.sacrifice_materials)
+			if(LAZYACCESS(I.matter, mat) > (SHEET_MATERIAL_AMOUNT * 10))
+				make_sacrifice(I, user, mat)
+				return TRUE
+
 		if(I.reagents)
-			var/datum/reagents/R = I.reagents
 			for(var/id in spellbook.sacrifice_reagents)
-				if(R.has_reagent(id,5))
-					make_sacrifice(I,user, id)
-					return 1
+				if(I.reagents.has_reagent(id, 5))
+					make_sacrifice(I, user, id)
+					return TRUE
 	..()
 
 /obj/item/spellbook/interact(mob/user)
@@ -99,7 +104,7 @@ var/list/artefact_feedback = list(/obj/structure/closet/wizard/armor = 		"HS",
 	if(temp)
 		dat = "[temp]<br><a href='byond://?src=\ref[src];temp=1'>Return</a>"
 	else
-		dat = "<center><h3>[spellbook.title]</h3><i>[spellbook.title_desc]</i><br>You have [uses] spell slot[uses > 1 ? "s" : ""] left.</center><br>"
+		dat = "<center><h3>[spellbook.title]</h3><i>[spellbook.title_desc]</i><br>You have [uses] spell slot\s left.</center><br>"
 		dat += "<center><font color='#ff33cc'>Requires Wizard Garb</font><br><font color='#ff6600'>Selectable Target</font><br><font color='#33cc33'>Spell Charge Type: Recharge, Sacrifice, Charges</font></center><br>"
 		dat += "<center><b>To use a contract, first bind it to your soul, then give it to someone to sign. This will bind their soul to you.</b></center><br>"
 		for(var/i in 1 to spellbook.spells.len)
@@ -308,3 +313,4 @@ var/list/artefact_feedback = list(/obj/structure/closet/wizard/armor = 		"HS",
 
 	var/list/sacrifice_reagents
 	var/list/sacrifice_objects
+	var/list/sacrifice_materials

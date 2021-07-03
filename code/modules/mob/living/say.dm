@@ -1,4 +1,4 @@
-var/list/department_radio_keys = list(
+var/global/list/department_radio_keys = list(
 	  ":r" = "right ear",	".r" = "right ear",
 	  ":l" = "left ear",	".l" = "left ear",
 	  ":i" = "intercom",	".i" = "intercom",
@@ -53,8 +53,8 @@ var/list/department_radio_keys = list(
 )
 
 
-var/list/channel_to_radio_key = new
-proc/get_radio_key_from_channel(var/channel)
+var/global/list/channel_to_radio_key = new
+/proc/get_radio_key_from_channel(var/channel)
 	var/key = channel_to_radio_key[channel]
 	if(!key)
 		for(var/radio_key in department_radio_keys)
@@ -86,10 +86,10 @@ proc/get_radio_key_from_channel(var/channel)
 		if(dongle.translate_binary) return 1
 
 /mob/living/proc/get_default_language()
-	. = ispath(default_language, /decl/language) && decls_repository.get_decl(default_language)
+	. = ispath(default_language, /decl/language) && GET_DECL(default_language)
 
-/mob/proc/is_muzzled()
-	return istype(wear_mask, /obj/item/clothing/mask/muzzle) || istype(wear_mask, /obj/item/clothing/sealant)
+/mob/living/is_silenced()
+	. = ..() || HAS_STATUS(src, STAT_SILENCE)
 
 //Takes a list of the form list(message, verb, whispering) and modifies it as needed
 //Returns 1 if a speech problem was applied, 0 otherwise
@@ -104,15 +104,15 @@ proc/get_radio_key_from_channel(var/channel)
 		verb = pick("yells","roars","hollers")
 		message_data[3] = 0
 		. = 1
-	else if(slurring)
+	else if(HAS_STATUS(src, STAT_SLUR))
 		message = slur(message)
 		verb = pick("slobbers","slurs")
 		. = 1
-	else if(stuttering)
+	else if(HAS_STATUS(src, STAT_STUTTER))
 		message = NewStutter(message)
 		verb = pick("stammers","stutters")
 		. = 1
-	else if(has_chem_effect(CE_SQUEAKY, 1))
+	else if(has_chemical_effect(CE_SQUEAKY, 1))
 		message = "<font face = 'Comic Sans MS'>[message]</font>"
 		verb = "squeaks"
 		. = 1
@@ -152,7 +152,7 @@ proc/get_radio_key_from_channel(var/channel)
 
 	return html_encode(message)
 
-/mob/living/say(var/message, var/decl/language/speaking = null, var/verb="says", var/alt_name="", whispering)
+/mob/living/say(var/message, var/decl/language/speaking, var/verb = "says", var/alt_name = "", whispering)
 	set waitfor = FALSE
 	if(client)
 		if(client.prefs.muted & MUTE_IC)
@@ -186,7 +186,11 @@ proc/get_radio_key_from_channel(var/channel)
 		if(speaking)
 			message = copytext_char(message,2+length_char(speaking.key))
 		else
-			speaking = get_default_language()
+			speaking = get_any_good_language(set_default=TRUE)
+			if (!speaking)
+				to_chat(src, SPAN_WARNING("You don't know a language and cannot speak."))
+				emote("custom", AUDIBLE_MESSAGE, "[pick("grunts", "babbles", "gibbers", "jabbers", "burbles")] aimlessly.")
+				return
 
 	// This is broadcast to all mobs with the language,
 	// irrespective of distance or anything else.
@@ -207,6 +211,7 @@ proc/get_radio_key_from_channel(var/channel)
 	message = trim_left(message)
 	message = handle_autohiss(message, speaking)
 	message = format_say_message(message)
+	message = filter_modify_message(message)
 
 	if(speaking && !speaking.can_be_spoken_properly_by(src))
 		message = speaking.muddle(message)
@@ -295,6 +300,7 @@ proc/get_radio_key_from_channel(var/channel)
 			if(O) //It's possible that it could be deleted in the meantime.
 				O.hear_talk(src, message, verb, speaking)
 
+	var/list/eavesdroppers = list()
 	if(whispering)
 		var/eavesdroping_range = 5
 		var/list/eavesdroping = list()
@@ -306,15 +312,17 @@ proc/get_radio_key_from_channel(var/channel)
 			if(M)
 				M.hear_say(stars(message), verb, speaking, alt_name, italics, src, speech_sound, sound_vol)
 				if(M.client)
-					speech_bubble_recipients |= M.client
+					eavesdroppers |= M.client
 
 		for(var/obj/O in eavesdroping)
 			spawn(0)
 				if(O) //It's possible that it could be deleted in the meantime.
 					O.hear_talk(src, stars(message), verb, speaking)
 
-	INVOKE_ASYNC(GLOBAL_PROC, .proc/animate_speech_bubble, speech_bubble, speech_bubble_recipients, 30)
-	INVOKE_ASYNC(src, /atom/movable/proc/animate_chat, message, speaking, italics, speech_bubble_recipients, 30)
+	INVOKE_ASYNC(GLOBAL_PROC, .proc/animate_speech_bubble, speech_bubble, speech_bubble_recipients | eavesdroppers, 30)
+	INVOKE_ASYNC(src, /atom/movable/proc/animate_chat, message, speaking, italics, speech_bubble_recipients)
+	if(length(eavesdroppers))
+		INVOKE_ASYNC(src, /atom/movable/proc/animate_chat, stars(message), speaking, italics, eavesdroppers)
 
 	if(whispering)
 		log_whisper("[name]/[key] : [message]")
@@ -323,7 +331,6 @@ proc/get_radio_key_from_channel(var/channel)
 	return 1
 
 /mob/living/proc/say_signlang(var/message, var/verb="gestures", var/decl/language/language)
-	message = filter_modify_message(message)
 	for (var/mob/O in viewers(src, null))
 		O.hear_signlang(message, verb, language, src)
 	return 1

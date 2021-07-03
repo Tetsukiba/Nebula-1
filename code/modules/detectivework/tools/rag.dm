@@ -87,15 +87,10 @@
 		to_chat(user, "<span class='warning'>The [initial(name)] is dry!</span>")
 	else
 		user.visible_message("\The [user] starts to wipe down [A] with [src]!")
-		reagents.splash(A, 1) //get a small amount of liquid on the thing we're wiping.
 		update_name()
 		if(do_after(user,30, progress = 1))
 			user.visible_message("\The [user] finishes wiping off the [A]!")
-			if(isturf(A))
-				var/turf/T = A
-				T.clean(src, user)
-			else
-				A.clean_blood()
+			reagents.splash(A, FLUID_QDEL_POINT)
 
 /obj/item/chems/glass/rag/attack(atom/target, mob/user , flag)
 	if(isliving(target))
@@ -177,7 +172,7 @@
 	if(reagents)
 		total_volume += reagents.total_volume
 		for(var/rtype in reagents.reagent_volumes)
-			var/decl/material/R = decls_repository.get_decl(rtype)
+			var/decl/material/R = GET_DECL(rtype)
 			total_fuel = REAGENT_VOLUME(reagents, rtype) * R.fuel_value
 	. = (total_fuel >= 2 && total_fuel >= total_volume*0.5)
 
@@ -187,7 +182,7 @@
 	if(!can_ignite())
 		return
 	START_PROCESSING(SSobj, src)
-	set_light(0.5, 0.1, 2, 2, "#e38f46")
+	set_light(2, 1, "#e38f46")
 	on_fire = 1
 	update_name()
 	update_icon()
@@ -225,6 +220,7 @@
 		qdel(src)
 		return
 
-	reagents.remove_reagent(/decl/material/liquid/fuel, reagents.maximum_volume/25)
+	if(reagents?.total_volume)
+		reagents.remove_reagent(/decl/material/liquid/fuel, reagents.maximum_volume/25)
 	update_name()
 	burn_time--

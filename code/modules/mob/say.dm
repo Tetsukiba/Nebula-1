@@ -104,9 +104,10 @@
 //parses the language code (e.g. :j) from text, such as that supplied to say.
 //returns the language object only if the code corresponds to a language that src can speak, otherwise null.
 /mob/proc/parse_language(var/message)
+
 	var/prefix = copytext_char(message,1,2)
 	if(length(message) >= 1 && prefix == get_prefix_key(/decl/prefix/audible_emote))
-		return decls_repository.get_decl(/decl/language/noise)
+		return GET_DECL(/decl/language/noise)
 
 	if(length(message) >= 2 && is_language_prefix(prefix))
 		var/language_prefix = lowertext(copytext_char(message, 2 ,3))
@@ -114,4 +115,8 @@
 		if (can_speak(L))
 			return L
 
-	return null
+/mob/proc/is_silenced()
+	. = is_muzzled()
+
+/mob/proc/is_muzzled()
+	return istype(wear_mask, /obj/item/clothing/mask/muzzle) || istype(wear_mask, /obj/item/clothing/sealant)

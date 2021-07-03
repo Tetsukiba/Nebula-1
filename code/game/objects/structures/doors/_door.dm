@@ -26,7 +26,7 @@
 	update_nearby_tiles(need_rebuild=TRUE)
 
 	if(material.luminescence)
-		set_light(0.5, 1, material.luminescence, l_color = material.color)
+		set_light(material.luminescence, 0.5, material.color)
 
 	if(material.opacity < 0.5)
 		alpha = 180
@@ -95,7 +95,7 @@
 	if(distance <= 1 && lock)
 		to_chat(user, SPAN_NOTICE("It appears to have a lock."))
 
-/obj/structure/door/attack_ai(mob/user)
+/obj/structure/door/attack_ai(mob/living/silicon/ai/user)
 	if(Adjacent(user) && isrobot(user))
 		return attack_hand(user)
 

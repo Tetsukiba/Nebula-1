@@ -7,7 +7,7 @@
 	. = mind.StoreMemory(memory, options)
 
 /datum/mind/proc/StoreMemory(var/memory, var/options)
-	var/decl/memory_options/MO = decls_repository.get_decl(options || /decl/memory_options/default)
+	var/decl/memory_options/MO = GET_DECL(options || /decl/memory_options/default)
 	return MO.Create(src, memory)
 
 /datum/mind/proc/RemoveMemory(var/datum/memory/memory, var/mob/remover)
@@ -70,7 +70,9 @@
 		var/datum/goal/ambition/ambition = SSgoals.ambitions[src]
 		output += "<HR><B>Ambitions:</B> [ambition.summarize()]"
 
-	show_browser(recipient, replacetext(jointext(output, "<BR>"),"\n","<BR>"),"window=memory")
+	var/datum/browser/popup = new(recipient, "window=memory")
+	popup.set_content(replacetext(jointext(output, "<BR>"),"\n","<BR>"))
+	popup.open()
 
 /***********
 * Memories *

@@ -5,8 +5,6 @@
 	name = "Lar Maria space station"
 	desc = "Sensors detect an orbital station with low energy profile and sporadic life signs."
 	icon_state = "object"
-	known = 0
-	
 
 /datum/map_template/ruin/away_site/lar_maria
 	name = "Lar Maria"
@@ -37,9 +35,6 @@
 	emote_hear = list("roars", "giggles", "breathes loudly", "mumbles", "yells something unintelligible")
 	emote_see = list("cries", "grins insanely", "itches fiercly", "scratches his face", "shakes his fists above his head")
 	turns_per_move = 5
-	response_help = "pokes"
-	response_disarm = "shoves"
-	response_harm = "hits"
 	speed = 8
 	can_escape = TRUE
 	stop_automated_movement_when_pulled = 0
@@ -57,7 +52,7 @@
 	qdel(src)
 
 /mob/living/simple_animal/hostile/lar_maria/test_subject
-	name = "\improper test subject"
+	name = "test subject"
 	desc = "Sick, filthy, angry and probably crazy human in an orange robe."
 	icon_state = "test_subject"
 	icon_living = "test_subject"
@@ -67,12 +62,12 @@
 	corpse = /obj/effect/landmark/corpse/lar_maria/test_subject
 
 /obj/effect/landmark/corpse/lar_maria/test_subject
-	name = "Dead test subject"
+	name = "dead test subject"
 	corpse_outfits = list(/decl/hierarchy/outfit/corpse/test_subject)
 	spawn_flags = CORPSE_SPAWNER_NO_RANDOMIZATION//no name, no hairs etc.
 
 /decl/hierarchy/outfit/corpse/test_subject
-	name = "Dead ZHP test subject"
+	name = "dead ZHP test subject"
 	uniform = /obj/item/clothing/under/color/orange
 	shoes = /obj/item/clothing/shoes/color/orange
 
@@ -86,9 +81,9 @@
 
 /decl/hierarchy/outfit/corpse/zhp_guard
 	name = "Dead ZHP guard"
-	uniform = /obj/item/clothing/under/rank/virologist
-	suit = /obj/item/clothing/suit/armor/pcarrier
-	head = /obj/item/clothing/head/soft/lar_maria/zhp_cap
+	uniform = /obj/item/clothing/under/virologist
+	suit = /obj/item/clothing/suit/armor/pcarrier/light
+	head = /obj/item/clothing/head/soft/zhp_cap
 	shoes = /obj/item/clothing/shoes/jackboots/duty
 	l_ear = /obj/item/radio/headset
 
@@ -118,12 +113,10 @@
 	. = ..()
 	icon_state = "[icon_state]_ranged"
 
-/obj/item/clothing/head/soft/lar_maria/zhp_cap
+/obj/item/clothing/head/soft/zhp_cap
 	name = "Zeng-Hu Pharmaceuticals cap"
-	icon = 'mods/content/corporate/away_sites/lar_maria/lar_maria_sprites.dmi'
+	icon = 'mods/content/corporate/icons/clothing/head/zhp_cap.dmi'
 	desc = "A green cap with Zeng-Hu Pharmaceuticals symbol on it."
-	icon_state = "zhp_cap"
-	item_icons = list(slot_head_str = 'mods/content/corporate/away_sites/lar_maria/lar_maria_clothing_sprites.dmi')
 
 /mob/living/simple_animal/hostile/lar_maria/virologist
 	name = "\improper virologist"
@@ -139,7 +132,7 @@
 
 /decl/hierarchy/outfit/corpse/zhp_virologist
 	name = "Dead male ZHP virologist"
-	uniform = /obj/item/clothing/under/rank/virologist
+	uniform = /obj/item/clothing/under/virologist
 	suit = /obj/item/clothing/suit/storage/toggle/labcoat
 	shoes = /obj/item/clothing/shoes/color/white
 	gloves = /obj/item/clothing/gloves/latex/nitrile
@@ -161,7 +154,7 @@
 
 /decl/hierarchy/outfit/corpse/zhp_virologist_female
 	name = "Dead female ZHP virologist"
-	uniform = /obj/item/clothing/under/rank/virologist
+	uniform = /obj/item/clothing/under/virologist
 	suit = /obj/item/clothing/suit/storage/toggle/labcoat
 	shoes = /obj/item/clothing/shoes/color/white
 	gloves = /obj/item/clothing/gloves/latex/nitrile

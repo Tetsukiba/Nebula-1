@@ -1,4 +1,4 @@
-var/list/holder_mob_icon_cache = list()
+var/global/list/holder_mob_icon_cache = list()
 
 //Helper object for picking creatures up.
 /obj/item/holder
@@ -8,7 +8,7 @@ var/list/holder_mob_icon_cache = list()
 	slot_flags = SLOT_HEAD | SLOT_HOLSTER
 	origin_tech = null
 	pixel_y = 8
-
+	origin_tech = "{'biotech':1}"
 	var/last_holder
 
 /obj/item/holder/Initialize()
@@ -20,8 +20,13 @@ var/list/holder_mob_icon_cache = list()
 		qdel(AM)
 	qdel(src)
 
+/obj/item/holder/physically_destroyed()
+	SHOULD_CALL_PARENT(FALSE)
+	destroy_all()
+
 /obj/item/holder/Destroy()
 	for(var/atom/movable/AM in src)
+		unregister_all_movement(last_holder, AM)
 		AM.forceMove(get_turf(src))
 	last_holder = null
 	STOP_PROCESSING(SSobj, src)
@@ -41,9 +46,8 @@ var/list/holder_mob_icon_cache = list()
 /obj/item/holder/proc/update_state(var/delay)
 	set waitfor = 0
 
-	if(last_holder != loc)
-		for(var/mob/M in contents)
-			unregister_all_movement(last_holder, M)
+	for(var/mob/M in contents)
+		unregister_all_movement(last_holder, M)
 
 	if(delay)
 		sleep(delay)
@@ -95,7 +99,7 @@ var/list/holder_mob_icon_cache = list()
 
 	..()
 
-var/list/holder_mob_icons = list(
+var/global/list/holder_mob_icons = list(
 	"repairbot" =         'icons/clothing/holders/holder_repairbot.dmi',
 	"constructiondrone" = 'icons/clothing/holders/holder_constructiondrone.dmi',
 	"mouse_brown" =       'icons/clothing/holders/holder_mouse_brown.dmi',
@@ -112,7 +116,8 @@ var/list/holder_mob_icons = list(
 	"cat2" =              'icons/clothing/holders/holder_cat2.dmi',
 	"cat3" =              'icons/clothing/holders/holder_cat3.dmi',
 	"corgi" =             'icons/clothing/holders/holder_corgi.dmi',
-	"slug" =              'icons/clothing/holders/holder_slug.dmi'
+	"possum" =            'icons/clothing/holders/holder_possum.dmi',
+	"poppy" =             'icons/clothing/holders/holder_poppy.dmi'
 )
 
 /obj/item/holder/proc/sync(var/mob/living/M)
@@ -120,8 +125,16 @@ var/list/holder_mob_icons = list(
 	set_dir(SOUTH)
 	overlays.Cut()
 
-	if(global.holder_mob_icons[initial(M.icon_state)])
-		icon = global.holder_mob_icons[initial(M.icon_state)]
+	var/check_state
+	if(ishuman(M))
+		var/mob/living/carbon/human/H = M
+		check_state = lowertext(H.species.name)
+	else
+		var/datum/extension/base_icon_state/bis = get_extension(M, /datum/extension/base_icon_state)
+		check_state = bis?.base_icon_state || initial(M.icon_state) 
+
+	if(check_state && global.holder_mob_icons[check_state])
+		icon = global.holder_mob_icons[check_state]
 		icon_state = ICON_STATE_WORLD
 		item_state = null
 		use_single_icon = TRUE
@@ -132,12 +145,18 @@ var/list/holder_mob_icons = list(
 		overlays |= M.overlays
 		use_single_icon = FALSE
 
-	color = M.color
+	if(ishuman(M))
+		var/mob/living/carbon/human/H = M
+		color = H.skin_colour
+	else
+		color = M.color
 	SetName(M.name)
 	desc = M.desc
+
 	var/mob/living/carbon/human/H = loc
-	last_holder = H
-	register_all_movement(H, M)
+	if(istype(H))
+		last_holder = H
+		register_all_movement(H, M)
 
 	update_held_icon()
 
@@ -215,42 +234,3 @@ var/list/holder_mob_icons = list(
 
 /mob/living/carbon/human/scoop_check(var/mob/living/scooper)
 	. = ..() && scooper.mob_size > src.mob_size
-
-/obj/item/holder/human
-	icon = 'icons/mob/holder_complex.dmi'
-	var/mob_blend_mode = ICON_ADD
-	slot_flags = SLOT_BACK
-	var/list/generate_for_slots = list(BP_L_HAND, BP_R_HAND, slot_back_str)
-
-/obj/item/holder/human/sync(var/mob/living/M)
-	// Generate appropriate on-mob icons.
-	var/mob/living/carbon/human/owner = M
-	if(istype(owner) && owner.species && LAZYLEN(generate_for_slots))
-
-		var/skin_colour = owner.skin_colour
-		var/hair_colour = owner.hair_colour
-		var/eye_colour =  owner.eye_colour
-		var/species_name = lowertext(owner.species.get_bodytype(owner))
-
-		for(var/cache_entry in generate_for_slots)
-			var/cache_key = "[owner.species]-[cache_entry]-[skin_colour]-[hair_colour]"
-			if(!holder_mob_icon_cache[cache_key])
-
-				// Generate individual icons.
-				var/icon/mob_icon = icon(icon, "[species_name]_holder_[cache_entry]_base")
-				mob_icon.Blend(skin_colour, ICON_ADD)
-				var/icon/hair_icon = icon(icon, "[species_name]_holder_[cache_entry]_hair")
-				hair_icon.Blend(hair_colour, ICON_ADD)
-				var/obj/item/organ/internal/eyes/eyes = owner.internal_organs_by_name[BP_EYES]
-				if(eyes)
-					var/icon/eyes_icon = icon(icon, "[species_name]_holder_[cache_entry]_eyes")
-					eyes_icon.Blend(eye_colour, (eyes.eye_blend || ICON_ADD))
-					mob_icon.Blend(eyes_icon, ICON_OVERLAY)
-				mob_icon.Blend(hair_icon, ICON_OVERLAY)
-
-				// Add to the cache.
-				holder_mob_icon_cache[cache_key] = mob_icon
-			item_icons[cache_entry] = holder_mob_icon_cache[cache_key]
-
-	// Handle the rest of sync().
-	..(M)

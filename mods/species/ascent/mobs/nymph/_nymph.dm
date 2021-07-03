@@ -52,6 +52,7 @@
 /mob/living/carbon/alien/ascent_nymph/Initialize(var/mapload)
 	update_icons()
 	. = ..(mapload)
+	set_extension(src, /datum/extension/base_icon_state, icon_state)
 
 /mob/living/carbon/alien/ascent_nymph/examine(mob/user)
 	. = ..()
@@ -71,7 +72,7 @@
 	var/list/adding = list()
 	if(stat == DEAD)
 		icon_state = "[initial(icon_state)]_dead"
-	else if(lying || resting || stunned)
+	else if(incapacitated(INCAPACITATION_KNOCKOUT))
 		icon_state = "[initial(icon_state)]_dead" // Maybe add sleep later?
 	else
 		icon_state = "[initial(icon_state)]"

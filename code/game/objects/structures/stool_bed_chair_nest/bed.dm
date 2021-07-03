@@ -22,6 +22,9 @@
 	material_alteration = MAT_FLAG_ALTERATION_ALL
 	tool_interaction_flags = TOOL_INTERACTION_DECONSTRUCT
 
+/obj/structure/bed/get_base_value()
+	. = round(..() * 2.5) // Utility structures should be worth more than their matter (wheelchairs, rollers, etc).
+
 /obj/structure/bed/update_material_name()
 	if(reinf_material)
 		SetName("[reinf_material.adjective_name] [initial(name)]")
@@ -57,7 +60,7 @@
 /obj/structure/bed/explosion_act(severity)
 	. = ..()
 	if(. && !QDELETED(src) && (severity == 1 || (severity == 2 && prob(50)) || (severity == 3 && prob(5))))
-		physically_destroyed(src)
+		physically_destroyed()
 
 /obj/structure/bed/attackby(obj/item/W, mob/user)
 	. = ..()
@@ -76,7 +79,7 @@
 			else if(istype(W,/obj/item/stack/material))
 				var/obj/item/stack/material/M = W
 				if(M.material && (M.material.flags & MAT_FLAG_PADDING))
-					padding_type = "[M.material.type]"
+					padding_type = M.material.type
 			if(!padding_type)
 				to_chat(user, "You cannot pad \the [src] with that.")
 				return
@@ -107,7 +110,8 @@
 /obj/structure/bed/Move()
 	. = ..()
 	if(buckled_mob)
-		buckled_mob.forceMove(src.loc)
+		buckled_mob.glide_size = glide_size // Setting loc apparently does animate with glide size.
+		buckled_mob.forceMove(loc)
 
 /obj/structure/bed/forceMove()
 	. = ..()
@@ -119,12 +123,12 @@
 
 /obj/structure/bed/proc/remove_padding()
 	if(reinf_material)
-		reinf_material.place_sheet(get_turf(src))
+		reinf_material.create_object(get_turf(src))
 		reinf_material = null
 	update_icon()
 
 /obj/structure/bed/proc/add_padding(var/padding_type)
-	reinf_material = decls_repository.get_decl(padding_type)
+	reinf_material = GET_DECL(padding_type)
 	update_icon()
 
 /obj/structure/bed/psych
@@ -184,7 +188,7 @@
 		return 1
 	..()
 
-/obj/structure/bed/roller/attack_hand(mob/living/user)
+/obj/structure/bed/roller/attack_hand(mob/user)
 	if(beaker && !buckled_mob)
 		remove_beaker(user)
 	else
@@ -239,25 +243,26 @@
 	queue_icon_update()
 	STOP_PROCESSING(SSobj,src)
 
-/obj/structure/bed/roller/MouseDrop(over_object, src_location, over_location)
-	..()
-	if(!CanMouseDrop(over_object))	return
-	if(!(ishuman(usr) || isrobot(usr)))	return
-	if(over_object == buckled_mob && beaker)
-		if(iv_attached)
-			detach_iv(buckled_mob, usr)
-		else
-			attach_iv(buckled_mob, usr)
-		return
-	if(ishuman(over_object))
-		if(user_buckle_mob(over_object, usr))
-			attach_iv(buckled_mob, usr)
-			return
+/obj/structure/bed/roller/handle_mouse_drop(atom/over, mob/user)
+	if(ishuman(user) || isrobot(user))
+		if(over == buckled_mob && beaker)
+			if(iv_attached)
+				detach_iv(buckled_mob, user)
+			else
+				attach_iv(buckled_mob, user)
+			return TRUE
+	if(ishuman(over))
+		var/mob/M = over
+		if(loc == M.loc && user_buckle_mob(M, user))
+			attach_iv(buckled_mob, user)
+			return TRUE
 	if(beaker)
-		remove_beaker(usr)
-		return
-	if(buckled_mob)	return
-	collapse()
+		remove_beaker(user)
+		return TRUE
+	if(!buckled_mob)
+		collapse()
+		return TRUE
+	. = ..()
 
 /obj/item/roller
 	name = "roller bed"
@@ -266,7 +271,11 @@
 	icon_state = ICON_STATE_WORLD
 	slot_flags = SLOT_BACK
 	w_class = ITEM_SIZE_LARGE
+	pickup_sound = 'sound/foley/pickup2.ogg'
 	var/structure_form_type = /obj/structure/bed/roller	//The deployed form path.
+
+/obj/item/roller/get_single_monetary_worth()
+	. = structure_form_type ? atom_info_repository.get_combined_worth_for(structure_form_type) : ..()
 
 /obj/item/roller/attack_self(mob/user)
 	var/obj/structure/bed/roller/R = new structure_form_type(user.loc)

@@ -15,11 +15,8 @@
 			tally -= 2
 		tally -= 1
 
-	if(CE_SPEEDBOOST in chem_effects)
-		tally -= chem_effects[CE_SPEEDBOOST]
-
-	if(CE_SLOWDOWN in chem_effects)
-		tally += chem_effects[CE_SLOWDOWN]
+	tally -= GET_CHEMICAL_EFFECT(src, CE_SPEEDBOOST)
+	tally += GET_CHEMICAL_EFFECT(src, CE_SLOWDOWN)
 
 	var/health_deficiency = (maxHealth - health)
 	if(health_deficiency >= 40) tally += (health_deficiency / 25)
@@ -95,7 +92,7 @@
 			if(prob(50))
 				thrust.stabilization_on = 0
 			SetMoveCooldown(15)	//2 seconds of random rando panic drifting
-			step(src, pick(GLOB.alldirs))
+			step(src, pick(global.alldirs))
 			return 0
 
 	. = ..()
@@ -134,6 +131,14 @@
 	. = ..()
 	if(.) //We moved
 		species.handle_exertion(src)
+
+		var/stamina_cost = 0
+		for(var/obj/item/grab/G AS_ANYTHING in get_active_grabs())
+			stamina_cost -= G.grab_slowdown()
+		stamina_cost = round(stamina_cost)
+		if(stamina_cost < 0)
+			adjust_stamina(stamina_cost)
+
 		handle_leg_damage()
 
 		if(client)

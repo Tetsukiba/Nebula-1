@@ -23,21 +23,21 @@
 	faction_invisible = 1
 	blacklisted_jobs = list(/datum/job/ai, /datum/job/cyborg, /datum/job/submap)
 	skill_setter = /datum/antag_skill_setter/station
-
 	faction = "loyalist"
+	var/command_department_id = /decl/department/command
 
 /decl/special_role/loyalist/Initialize()
 	. = ..()
-	welcome_text = "You belong to the [GLOB.using_map.company_name], body and soul. Preserve its interests against the conspirators amongst the crew."
-	faction_welcome = "Preserve [GLOB.using_map.company_short]'s interests against the traitorous recidivists amongst the crew. Protect the heads of staff with your life."
-	faction_descriptor = "[GLOB.using_map.company_name]"
+	welcome_text = "You belong to the [global.using_map.company_name], body and soul. Preserve its interests against the conspirators amongst the crew."
+	faction_welcome = "Preserve [global.using_map.company_short]'s interests against the traitorous recidivists amongst the crew. Protect the heads of staff with your life."
+	faction_descriptor = "[global.using_map.company_name]"
 
 /decl/special_role/loyalist/create_global_objectives()
 	if(!..())
 		return
 	global_objectives = list()
 	for(var/mob/living/carbon/human/player in SSmobs.mob_list)
-		if(!player.mind || player.stat==2 || !(player.mind.assigned_role in SSjobs.titles_by_department(DEPT_COMMAND)))
+		if(!player.mind || player.stat==2 || !(player.mind.assigned_role in SSjobs.titles_by_department(command_department_id)))
 			continue
 		var/datum/objective/protect/loyal_obj = new
 		loyal_obj.target = player.mind

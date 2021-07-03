@@ -1,4 +1,4 @@
-GLOBAL_VAR_INIT(default_gyne, create_gyne_name())
+var/global/default_gyne
 
 /decl/ghosttrap/kharmaani_egg
 	name = "mantid nymph"
@@ -27,14 +27,14 @@ GLOBAL_VAR_INIT(default_gyne, create_gyne_name())
 	var/hatching = FALSE				// If we're in the process of hatching.
 	var/hatched = FALSE					// Whether or not this egg has already hatched.
 
-	matter = list(
-		/decl/material/solid/glass = MATTER_AMOUNT_TRACE
-	)
-
+	material = /decl/material/solid/gemstone/crystal
+	
 /obj/structure/insectoid_egg/Initialize()
 	. = ..()
 	START_PROCESSING(SSprocessing, src)
-	lineage = GLOB.default_gyne
+	if(!global.default_gyne)
+		global.default_gyne = create_gyne_name()
+	lineage = global.default_gyne
 
 /obj/structure/insectoid_egg/Destroy()
 	STOP_PROCESSING(SSprocessing, src)
@@ -89,7 +89,7 @@ GLOBAL_VAR_INIT(default_gyne, create_gyne_name())
 	maturity = min(100, maturity + 1)
 	ready_to_hatch = maturity == 100 && !ready_to_hatch // Lazy flip from change.
 	if(ready_to_hatch)
-		var/decl/ghosttrap/G = decls_repository.get_decl(/decl/ghosttrap/kharmaani_egg)
+		var/decl/ghosttrap/G = GET_DECL(/decl/ghosttrap/kharmaani_egg)
 		G.request_player(src, "A mantid nymph is ready to hatch and needs a player.")
 
 /obj/structure/insectoid_egg/proc/hatch(var/client/C)

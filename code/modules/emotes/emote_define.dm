@@ -60,10 +60,8 @@
 			to_chat(user, SPAN_WARNING("\The [target] is too far away."))
 			return
 
-	var/datum/gender/user_gender = gender_datums[user.get_visible_gender()]
-	var/datum/gender/target_gender
-	if(target)
-		target_gender = gender_datums[target.get_visible_gender()]
+	var/decl/pronouns/user_gender =   user.get_pronouns()
+	var/decl/pronouns/target_gender = target?.get_pronouns()
 
 	var/use_3p
 	var/use_1p
@@ -109,7 +107,7 @@
 		if(message_type == AUDIBLE_MESSAGE)
 			if(isliving(user))
 				var/mob/living/L = user
-				if(L.silent)
+				if(HAS_STATUS(L, STAT_SILENCE))
 					M.visible_message(message = "[user] opens their mouth silently!", self_message = "You cannot say anything!", blind_message = emote_message_impaired, checkghosts = /datum/client_preference/ghost_sight)
 					return
 				else

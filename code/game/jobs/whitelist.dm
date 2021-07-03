@@ -1,6 +1,6 @@
 #define WHITELISTFILE "data/whitelist.txt"
 
-var/list/whitelist = list()
+var/global/list/whitelist = list()
 
 /hook/startup/proc/loadWhitelist()
 	if(config.usewhitelist)
@@ -8,15 +8,16 @@ var/list/whitelist = list()
 	return 1
 
 /proc/load_whitelist()
-	whitelist = file2list(WHITELISTFILE)
-	if(!whitelist.len)	whitelist = null
+	whitelist = file2list(WHITELISTFILE, FALSE)
+	if(!length(whitelist))
+		whitelist = null
 
 /proc/check_whitelist(mob/M /*, var/rank*/)
 	if(!whitelist)
 		return 0
 	return ("[M.ckey]" in whitelist)
 
-/var/list/alien_whitelist = list()
+var/global/list/alien_whitelist = list()
 
 /hook/startup/proc/loadAlienWhitelist()
 	if(config.usealienwhitelist)
@@ -27,17 +28,18 @@ var/list/whitelist = list()
 			load_alienwhitelist()
 	return 1
 /proc/load_alienwhitelist()
-	var/text = file2text("config/alienwhitelist.txt")
+	var/text = safe_file2text("config/alienwhitelist.txt", FALSE)
 	if (!text)
 		log_misc("Failed to load config/alienwhitelist.txt")
 		return 0
 	else
 		alien_whitelist = splittext(text, "\n")
 		return 1
+
 /proc/load_alienwhitelistSQL()
-	var/DBQuery/query = dbcon_old.NewQuery("SELECT * FROM `whitelist`")
+	var/DBQuery/query = dbcon.NewQuery("SELECT * FROM `whitelist`")
 	if(!query.Execute())
-		to_world_log(dbcon_old.ErrorMsg())
+		to_world_log(dbcon.ErrorMsg())
 		return 0
 	else
 		while(query.NextRow())

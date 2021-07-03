@@ -28,14 +28,16 @@
 	add_antagonist(M.mind, 1, 0, 1) // Equip them and move them to spawn.
 	return M
 
-/decl/special_role/proc/create_id(var/assignment, var/mob/living/carbon/human/player, var/equip = 1)
-
+/decl/special_role/proc/create_id(var/mob/living/carbon/human/player, var/equip = TRUE)
+	if(!id_title || !id_type)
+		return
 	var/obj/item/card/id/W = new id_type(player)
-	if(!W) return
-	W.access |= default_access
-	W.assignment = "[assignment]"
+	if(length(default_access))
+		W.access |= default_access
+	W.assignment = id_title
 	player.set_id_info(W)
-	if(equip) player.equip_to_slot_or_del(W, slot_wear_id_str)
+	if(equip)
+		player.equip_to_slot_or_del(W, slot_wear_id_str)
 	return W
 
 /decl/special_role/proc/create_radio(var/freq, var/mob/living/carbon/human/player)
@@ -97,11 +99,11 @@
 	// Basic intro text.
 	to_chat(player.current, "<span class='danger'><font size=3>You are a [name]!</font></span>")
 	if(leader_welcome_text && player == leader)
-		to_chat(player.current, "<span class='antagdesc'>[leader_welcome_text]</span>")
+		to_chat(player.current, "<span class='antagdesc'>[get_leader_welcome_text(player.current)]</span>")
 	else
-		to_chat(player.current, "<span class='antagdesc'>[welcome_text]</span>")
+		to_chat(player.current, "<span class='antagdesc'>[get_welcome_text(player.current)]</span>")
 	if (config.objectives_disabled == CONFIG_OBJECTIVE_NONE || !player.objectives.len)
-		to_chat(player.current, "[antag_text]")
+		to_chat(player.current, get_antag_text(player.current))
 
 	if((flags & ANTAG_HAS_NUKE) && !spawned_nuke)
 		create_nuke()

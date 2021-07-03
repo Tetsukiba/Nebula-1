@@ -143,20 +143,12 @@
 /obj/machinery/suit_cycler,
 /turf/simulated/floor/tiled/airless,
 /area/map_template/ecship/crew)
-"ax" = (
-/obj/effect/floor_decal/corner/purple{
-	icon_state = "corner_white";
-	dir = 5
-	},
-/obj/machinery/suit_cycler,
-/turf/simulated/floor/tiled/airless,
-/area/map_template/ecship/crew)
 "ay" = (
 /obj/machinery/light{
 	icon_state = "tube1";
 	dir = 8
 	},
-/obj/structure/closet/walllocker/emerglocker/west,
+/obj/structure/emergency_dispenser/west,
 /turf/simulated/floor/tiled/airless,
 /area/map_template/ecship/crew)
 "az" = (
@@ -204,7 +196,7 @@
 	icon_state = "bulb1";
 	dir = 1
 	},
-/obj/structure/closet/walllocker/emerglocker/west,
+/obj/structure/emergency_dispenser/west,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/cryo)
 "aF" = (
@@ -326,7 +318,7 @@
 	icon_state = "bulb1";
 	dir = 8
 	},
-/obj/structure/closet/walllocker/emerglocker/west,
+/obj/structure/emergency_dispenser/west,
 /turf/simulated/floor/tiled/airless,
 /area/map_template/ecship/cryo)
 "aS" = (
@@ -587,7 +579,7 @@
 	dir = 1
 	},
 /obj/machinery/light/small,
-/obj/structure/closet/walllocker/emerglocker/west,
+/obj/structure/emergency_dispenser/west,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/cryo)
 "br" = (
@@ -728,7 +720,6 @@
 "bC" = (
 /obj/structure/catwalk,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 10
 	},
 /obj/structure/cable{
@@ -1414,7 +1405,6 @@
 /area/map_template/ecship/engineering)
 "cO" = (
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	icon_state = "intact";
 	dir = 6
 	},
 /obj/effect/floor_decal/corner/yellow{
@@ -1516,7 +1506,7 @@
 	icon_state = "corner_white";
 	dir = 9
 	},
-/obj/structure/closet/walllocker/emerglocker/west,
+/obj/structure/emergency_dispenser/west,
 /obj/machinery/meter,
 /turf/simulated/floor,
 /area/map_template/ecship/engineering)
@@ -1650,7 +1640,6 @@
 /obj/structure/catwalk,
 /obj/structure/handrail,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 6
 	},
 /obj/effect/landmark/scorcher,
@@ -1693,7 +1682,6 @@
 	dir = 1
 	},
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 5
 	},
 /obj/structure/cable{
@@ -1706,7 +1694,6 @@
 /area/map_template/ecship/engineering)
 "dq" = (
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 4
 	},
 /obj/structure/cable{
@@ -1720,7 +1707,6 @@
 "dr" = (
 /obj/structure/bed/chair,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 4
 	},
 /obj/structure/cable{
@@ -1767,7 +1753,6 @@
 "dt" = (
 /obj/machinery/door/airlock/external,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 4
 	},
 /obj/structure/cable{
@@ -1778,7 +1763,6 @@
 /area/map_template/ecship/engineering)
 "du" = (
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 4
 	},
 /obj/structure/handrail{
@@ -1795,7 +1779,6 @@
 /obj/structure/catwalk,
 /obj/structure/handrail,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 4
 	},
 /obj/effect/landmark/scorcher,
@@ -1804,7 +1787,6 @@
 "dw" = (
 /obj/structure/catwalk,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 9
 	},
 /obj/effect/landmark/scorcher,
@@ -1915,7 +1897,6 @@
 "dI" = (
 /obj/structure/catwalk,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 4
 	},
 /obj/effect/landmark/scorcher,
@@ -1945,7 +1926,6 @@
 "dO" = (
 /obj/structure/catwalk,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 6
 	},
 /obj/structure/cable{
@@ -1988,7 +1968,6 @@
 "dX" = (
 /obj/structure/catwalk,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 5
 	},
 /obj/effect/landmark/scorcher,
@@ -1997,7 +1976,6 @@
 "dY" = (
 /obj/structure/lattice,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 4
 	},
 /obj/effect/landmark/scorcher,
@@ -2022,7 +2000,6 @@
 	name = "\improper OXYGEN"
 	},
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 4
 	},
 /turf/simulated/wall/r_wall/hull,
@@ -2054,7 +2031,6 @@
 /area/map_template/ecship/engine)
 "ee" = (
 /obj/machinery/atmospherics/pipe/simple/visible/fuel{
-	icon_state = "intact";
 	dir = 4
 	},
 /turf/simulated/wall/r_wall/hull,
@@ -2099,7 +2075,6 @@
 "ej" = (
 /obj/structure/lattice,
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	icon_state = "intact";
 	dir = 6
 	},
 /obj/effect/landmark/scorcher,
@@ -2133,8 +2108,7 @@
 /area/map_template/ecship/engine)
 "em" = (
 /obj/machinery/atmospherics/pipe/simple/visible/cyan{
-	dir = 4;
-	icon_state = "intact"
+	dir = 4
 	},
 /turf/simulated/wall/r_wall/hull,
 /area/map_template/ecship/engine)
@@ -2904,7 +2878,7 @@ ac
 ac
 ac
 ac
-ax
+aw
 ay
 aM
 aQ
@@ -2940,7 +2914,7 @@ ad
 ak
 am
 ac
-ax
+aw
 aC
 aN
 bd
@@ -3048,7 +3022,7 @@ ac
 ac
 ac
 ac
-ax
+aw
 aG
 aP
 bj

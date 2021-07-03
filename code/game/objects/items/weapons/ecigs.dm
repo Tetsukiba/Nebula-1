@@ -50,7 +50,7 @@
 	. = ..()
 	color = pick(ecig_colors)
 
-obj/item/clothing/mask/smokable/ecig/util/examine(mob/user)
+/obj/item/clothing/mask/smokable/ecig/util/examine(mob/user)
 	. = ..()
 	if(ec_cartridge)
 		to_chat(user,"<span class='notice'>There are [round(ec_cartridge.reagents.total_volume, 1)] units of liquid remaining.</span>")
@@ -120,7 +120,7 @@ obj/item/clothing/mask/smokable/ecig/util/examine(mob/user)
 /obj/item/clothing/mask/smokable/ecig/on_update_icon()
 	..()
 	if(lit)
-		set_light(0.6, 0.5, brightness_on)
+		set_light(brightness_on)
 	else
 		set_light(0)
 	if(ec_cartridge && check_state_in_icon("[icon_state]-loaded", icon))
@@ -139,7 +139,7 @@ obj/item/clothing/mask/smokable/ecig/util/examine(mob/user)
 			update_icon()
 			to_chat(user, "<span class='notice'>You insert \the [I] into \the [src].</span> ")
 
-	if(istype(I, /obj/item/screwdriver))
+	if(isScrewdriver(I))
 		if(cigcell) //if contains powercell
 			cigcell.update_icon()
 			cigcell.dropInto(loc)

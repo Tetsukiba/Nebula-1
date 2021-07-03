@@ -28,7 +28,7 @@
 	return 1
 
 /decl/special_role/godcultist/post_spawn()
-	var/decl/special_role/deity = decls_repository.get_decl(/decl/special_role/deity)
+	var/decl/special_role/deity = GET_DECL(/decl/special_role/deity)
 	if(!deity.current_antagonists.len)
 		return
 	var/count = 1
@@ -58,13 +58,13 @@
 		return 1
 	if(href_list["selectgod"])
 		var/list/god_list = list()
-		var/decl/special_role/deity = decls_repository.get_decl(/decl/special_role/deity)
+		var/decl/special_role/deity = GET_DECL(/decl/special_role/deity)
 		if(length(deity.current_antagonists))
 			for(var/m in deity.current_antagonists)
 				var/datum/mind/mind = m
 				god_list += mind.current
 		else
-			for(var/mob/living/deity/specific_deity in GLOB.player_list)
+			for(var/mob/living/deity/specific_deity in global.player_list)
 				god_list += specific_deity
 		if(god_list.len)
 			var/mob/living/deity/D = input(usr, "Select a deity for this cultist.") in null|god_list
@@ -86,7 +86,7 @@
 	player.current.remove_language(/decl/language/cultcommon)
 
 /decl/special_role/godcultist/proc/get_deity(var/datum/mind/player)
-	var/decl/special_role/deity = decls_repository.get_decl(/decl/special_role/deity)
+	var/decl/special_role/deity = GET_DECL(/decl/special_role/deity)
 	for(var/m in deity.current_antagonists)
 		var/datum/mind/mind = m
 		var/mob/living/deity/god = mind.current
@@ -96,7 +96,7 @@
 /mob/living/proc/dpray(var/msg as text)
 	set category = "Abilities"
 
-	var/decl/special_role/godcultist/godcult = decls_repository.get_decl(/decl/special_role/godcultist)
+	var/decl/special_role/godcultist/godcult = GET_DECL(/decl/special_role/godcultist)
 	if(!src.mind || !godcult.is_antagonist(mind))
 		return
 	msg = sanitize(msg)

@@ -10,15 +10,16 @@
 	var/buckle_sound
 	var/mob/living/buckled_mob = null
 
-/obj/attack_hand(mob/living/user)
+/obj/attack_hand(mob/user)
 	. = ..()
 	if(can_buckle && buckled_mob)
 		user_unbuckle_mob(user)
 
-/obj/MouseDrop_T(mob/living/M, mob/living/user)
+/obj/receive_mouse_drop(atom/dropping, mob/living/user)
 	. = ..()
-	if(can_buckle && istype(M))
-		user_buckle_mob(M, user)
+	if(!. && can_buckle && isliving(dropping))
+		user_buckle_mob(dropping, user)
+		return TRUE
 
 /obj/Destroy()
 	unbuckle_mob()
@@ -67,13 +68,15 @@
 		else
 			animate(M, pixel_x = M.default_pixel_x, pixel_y = M.default_pixel_y, pixel_z = M.default_pixel_z, 4, 1, LINEAR_EASING)
 
+/mob/proc/can_be_buckled(var/mob/user)
+	. = user.Adjacent(src) && !istype(user, /mob/living/silicon/pai)
+
 /obj/proc/user_buckle_mob(mob/living/M, mob/user)
-	if(!user.Adjacent(M) || istype(user, /mob/living/silicon/pai) || (M != user && user.incapacitated()))
+	if(M != user && user.incapacitated())
 		return FALSE
 	if(M == buckled_mob)
 		return FALSE
-	if(istype(M, /mob/living/carbon/slime))
-		to_chat(user, "<span class='warning'>\The [M] is too squishy to buckle in.</span>")
+	if(!M.can_be_buckled(user))
 		return FALSE
 
 	add_fingerprint(user)
@@ -90,30 +93,29 @@
 	if(.)
 		if(M == user)
 			M.visible_message(\
-				"<span class='notice'>\The [M.name] buckles themselves to \the [src].</span>",\
-				"<span class='notice'>You buckle yourself to \the [src].</span>",\
-				"<span class='notice'>You hear metal clanking.</span>")
+				SPAN_NOTICE("\The [M.name] buckles themselves to \the [src]."),\
+				SPAN_NOTICE("You buckle yourself to \the [src]."),\
+				SPAN_NOTICE("You hear metal clanking."))
 		else
 			M.visible_message(\
-				"<span class='danger'>\The [M.name] is buckled to \the [src] by \the [user.name]!</span>",\
-				"<span class='danger'>You are buckled to \the [src] by \the [user.name]!</span>",\
-				"<span class='notice'>You hear metal clanking.</span>")
+				SPAN_DANGER("\The [M.name] is buckled to \the [src] by \the [user.name]!"),\
+				SPAN_DANGER("You are buckled to \the [src] by \the [user.name]!"),\
+				SPAN_NOTICE("You hear metal clanking."))
 
 /obj/proc/user_unbuckle_mob(mob/user)
 	var/mob/living/M = unbuckle_mob()
 	if(M)
 		if(M != user)
 			M.visible_message(\
-				"<span class='notice'>\The [M.name] was unbuckled by \the [user.name]!</span>",\
-				"<span class='notice'>You were unbuckled from \the [src] by \the [user.name].</span>",\
-				"<span class='notice'>You hear metal clanking.</span>")
+				SPAN_NOTICE("\The [M.name] was unbuckled by \the [user.name]!"),\
+				SPAN_NOTICE("You were unbuckled from \the [src] by \the [user.name]."),\
+				SPAN_NOTICE("You hear metal clanking."))
 		else
 			M.visible_message(\
-				"<span class='notice'>\The [M.name] unbuckled themselves!</span>",\
-				"<span class='notice'>You unbuckle yourself from \the [src].</span>",\
-				"<span class='notice'>You hear metal clanking.</span>")
+				SPAN_NOTICE("\The [M.name] unbuckled themselves!"),\
+				SPAN_NOTICE("You unbuckle yourself from \the [src]."),\
+				SPAN_NOTICE("You hear metal clanking."))
+		for(var/obj/item/grab/G AS_ANYTHING in (M.grabbed_by|grabbed_by))
+			qdel(G)
 		add_fingerprint(user)
 	return M
-
-/obj/CanPass(atom/movable/mover, turf/target, height = 1.5, air_group = 0)
-	. = ..() || (buckled_mob == mover)

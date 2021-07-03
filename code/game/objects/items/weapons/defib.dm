@@ -67,16 +67,15 @@
 	else
 		..()
 
-/obj/item/defibrillator/MouseDrop()
-	if(ismob(src.loc))
-		if(!CanMouseDrop(src))
-			return
-		var/mob/M = src.loc
-		if(!M.unEquip(src))
-			return
-		src.add_fingerprint(usr)
-		M.put_in_hands(src)
-
+// what is this proc doing?
+/obj/item/defibrillator/handle_mouse_drop(var/atom/over, var/mob/user)
+	if(ismob(loc))
+		var/mob/M = loc
+		if(M.unEquip(src))
+			add_fingerprint(usr)
+			M.put_in_hands(src)
+			return TRUE
+	. = ..()
 
 /obj/item/defibrillator/attackby(obj/item/W, mob/user, params)
 	if(W == paddles)
@@ -272,7 +271,7 @@
 /obj/item/shockpaddles/proc/check_blood_level(mob/living/carbon/human/H)
 	if(!H.should_have_organ(BP_HEART))
 		return FALSE
-	var/obj/item/organ/internal/heart/heart = H.internal_organs_by_name[BP_HEART]
+	var/obj/item/organ/internal/heart/heart = H.get_internal_organ(BP_HEART)
 	if(!heart || H.get_blood_volume() < BLOOD_VOLUME_SURVIVE)
 		return TRUE
 	return FALSE
@@ -335,6 +334,11 @@
 	if(check_blood_level(H))
 		make_announcement("buzzes, \"Warning - Patient is in hypovolemic shock and may require a blood transfusion.\"", "warning") //also includes heart damage
 
+	if(H.internal_organs_by_name[BP_HEART]) //People may need more direct instruction
+		var/obj/item/organ/internal/heart/heart = H.internal_organs_by_name[BP_HEART]
+		if(heart.is_bruised())
+			make_announcement("buzzes, \"Danger! The patient has sustained a cardiac contusion and will require surgical treatment for full recovery!\"", "danger")
+
 	//placed on chest and short delay to shock for dramatic effect, revive time is 5sec total
 	if(!do_after(user, chargetime, H))
 		return
@@ -363,11 +367,12 @@
 	make_announcement("pings, \"Resuscitation successful.\"", "notice")
 	playsound(get_turf(src), 'sound/machines/defib_success.ogg', 50, 0)
 	H.resuscitate()
-	var/obj/item/organ/internal/cell/potato = H.internal_organs_by_name[BP_CELL]
+	var/obj/item/organ/internal/cell/potato = H.get_internal_organ(BP_CELL)
 	if(istype(potato) && potato.cell)
 		var/obj/item/cell/C = potato.cell
 		C.give(chargecost)
-	H.AdjustSleeping(-60)
+
+	ADJ_STATUS(H, STAT_ASLEEP, -60)
 	log_and_message_admins("used \a [src] to revive [key_name(H)].")
 
 /obj/item/shockpaddles/proc/lowskill_revive(mob/living/carbon/human/H, mob/living/user)
@@ -437,7 +442,7 @@
 	M.reload_fullscreen()
 
 	M.emote("gasp")
-	M.Weaken(rand(10,25))
+	SET_STATUS_MAX(M, STAT_WEAK, rand(10,25))
 	M.updatehealth()
 	apply_brain_damage(M, deadtime)
 
@@ -446,7 +451,7 @@
 
 	if(!H.should_have_organ(BP_BRAIN)) return //no brain
 
-	var/obj/item/organ/internal/brain/brain = H.internal_organs_by_name[BP_BRAIN]
+	var/obj/item/organ/internal/brain/brain = H.get_internal_organ(BP_BRAIN)
 	if(!brain) return //no brain
 
 	var/brain_damage = Clamp((deadtime - DEFIB_TIME_LOSS)/(DEFIB_TIME_LIMIT - DEFIB_TIME_LOSS)*brain.max_damage, H.getBrainLoss(), brain.max_damage)

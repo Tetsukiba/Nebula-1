@@ -22,9 +22,9 @@
 		BP_BRAIN = /obj/item/organ/internal/brain/starlight
 		)
 	spawn_flags = SPECIES_IS_RESTRICTED
-	genders = list(NEUTER)
+	available_pronouns = list(/decl/pronouns/neuter)
 	force_cultural_info = list(
-		TAG_CULTURE = CULTURE_STARLIGHT
+		TAG_CULTURE = /decl/cultural_info/culture/other
 	)
 
 /decl/species/starlight/handle_death_check(var/mob/living/carbon/human/H)

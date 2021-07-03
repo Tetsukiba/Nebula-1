@@ -2,8 +2,8 @@
 /obj/item/rig/mantid
 	name = "alate support exosuit"
 	desc = "A powerful support exosuit with integrated power supply, weapon and atmosphere. It's closer to a mech than a rig."
-	icon_state = "kexosuit"
-	item_state = null
+	icon = 'mods/species/ascent/icons/rig/rig.dmi'
+	
 	suit_type = "support exosuit"
 	armor = list(
 		melee = ARMOR_MELEE_MAJOR,
@@ -19,18 +19,18 @@
 	online_slowdown = 0
 	offline_slowdown = 1
 	equipment_overlay_icon = null
-	air_type =   /obj/item/tank/mantid/reactor
-	cell_type =  /obj/item/cell/mantid
-	chest_type = /obj/item/clothing/suit/space/rig/mantid
-	helm_type =  /obj/item/clothing/head/helmet/space/rig/mantid
-	boot_type =  /obj/item/clothing/shoes/magboots/rig/mantid
-	glove_type = /obj/item/clothing/gloves/rig/mantid
+
+	air_supply = /obj/item/tank/mantid/reactor
+	cell =       /obj/item/cell/mantid
+	chest =      /obj/item/clothing/suit/space/rig/mantid
+	helmet =     /obj/item/clothing/head/helmet/space/rig/mantid
+	boots =      /obj/item/clothing/shoes/magboots/rig/mantid
+	gloves =     /obj/item/clothing/gloves/rig/mantid
+
 	update_visible_name = TRUE
-	icon = 'mods/species/ascent/icons/rig/inventory.dmi'
 	sprite_sheets = list(
-		BODYTYPE_MANTID_LARGE = 'mods/species/ascent/icons/rig/gyne.dmi',
-		BODYTYPE_MANTID_SMALL = 'mods/species/ascent/icons/rig/alate.dmi',
-		BODYTYPE_SNAKE =        'mods/species/ascent/icons/rig/serpentid.dmi'
+		BODYTYPE_MANTID_LARGE = 'mods/species/ascent/icons/rig/rig_gyne.dmi',
+		BODYTYPE_SNAKE =        'mods/species/ascent/icons/rig/rig_serpentid.dmi'
 		)
 	initial_modules = list(
 		/obj/item/rig_module/vision/thermal,
@@ -88,8 +88,11 @@
 	usable = FALSE
 	selectable = TRUE
 
-/obj/item/rig_module/device/multitool/ismultitool()
-	return device && device.ismultitool()
+/obj/item/rig_module/device/multitool/get_tool_quality(archetype)
+	return device?.get_tool_quality(archetype)
+
+/obj/item/rig_module/device/multitool/get_tool_speed(archetype)
+	return device?.get_tool_speed(archetype)
 
 /obj/item/rig_module/device/cable_coil
 	name = "mantid cable extruder"
@@ -126,17 +129,11 @@
 	usable = TRUE
 	selectable = TRUE
 
-/obj/item/rig_module/device/clustertool/iswrench()
-	return device && device.iswrench()
+/obj/item/rig_module/device/clustertool/get_tool_quality(archetype)
+	return device?.get_tool_quality(archetype)
 
-/obj/item/rig_module/device/clustertool/iswirecutter()
-	return device && device.iswirecutter()
-
-/obj/item/rig_module/device/clustertool/isscrewdriver()
-	return device && device.isscrewdriver()
-
-/obj/item/rig_module/device/clustertool/iscrowbar()
-	return device && device.iscrowbar()
+/obj/item/rig_module/device/clustertool/get_tool_speed(archetype)
+	return device?.get_tool_speed(archetype)
 
 // Atmosphere/jetpack filler.
 /obj/item/tank/mantid
@@ -156,12 +153,7 @@
 /obj/item/tank/jetpack/ascent
 	name = "catalytic maneuvering pack"
 	desc = "An integrated Ascent gas processing plant and maneuvering pack that continuously synthesises 'breathable' atmosphere and propellant."
-	icon = 'mods/species/ascent/icons/jetpack.dmi'
-	sprite_sheets = list(
-		BODYTYPE_MANTID_LARGE = 'mods/species/ascent/icons/species/mantid/onmob_back_gyne.dmi',
-		BODYTYPE_MANTID_SMALL = 'mods/species/ascent/icons/species/mantid/onmob_back_alate.dmi',
-		BODYTYPE_SNAKE =        'mods/species/ascent/icons/species/serpentid/onmob_back_serpentid.dmi'
-	)
+	icon = 'mods/species/ascent/icons/clothing/jetpack.dmi'
 	var/refill_gas_type = /decl/material/gas/methyl_bromide
 	var/gas_regen_amount = 0.03
 	var/gas_regen_cap = 30
@@ -245,9 +237,9 @@
 /obj/item/rig/mantid/serpentid
 	name = "serpentid support exosuit"
 	mantid_caste = SPECIES_SERPENTID
-	air_type =   /obj/item/tank/mantid/reactor/oxygen
-	chest_type = /obj/item/clothing/suit/space/rig/mantid/serpentid
-	boot_type =  null
+	air_supply = /obj/item/tank/mantid/reactor/oxygen
+	chest =      /obj/item/clothing/suit/space/rig/mantid/serpentid
+	boots =      FALSE
 
 /obj/item/clothing/suit/space/rig/mantid/serpentid
 	body_parts_covered = SLOT_UPPER_BODY|SLOT_LOWER_BODY|SLOT_LEGS|SLOT_FEET
@@ -263,11 +255,17 @@
 /obj/item/clothing/head/helmet/space/rig/mantid
 	light_color = "#00ffff"
 	desc = "More like a torpedo casing than a helmet."
-	bodytype_restricted = list(BODYTYPE_MANTID_LARGE, BODYTYPE_MANTID_SMALL)
+	bodytype_restricted = list(BODYTYPE_MANTID_LARGE, BODYTYPE_MANTID_SMALL, BODYTYPE_SNAKE)
+	icon = 'mods/species/ascent/icons/rig/rig_helmet.dmi'
+	sprite_sheets = list(
+		BODYTYPE_MANTID_LARGE = 'mods/species/ascent/icons/rig/rig_helmet_gyne.dmi',
+		BODYTYPE_SNAKE = 'mods/species/ascent/icons/rig/rig_helmet_serpentid.dmi'
+	)
 
 /obj/item/clothing/suit/space/rig/mantid
 	desc = "It's closer to a mech than a suit."
-	bodytype_restricted = list(BODYTYPE_MANTID_LARGE, BODYTYPE_MANTID_SMALL)
+	bodytype_restricted = list(BODYTYPE_MANTID_LARGE, BODYTYPE_MANTID_SMALL, BODYTYPE_SNAKE)
+	icon = 'mods/species/ascent/icons/rig/rig_chest.dmi'
 	allowed = list(
 		/obj/item/clustertool,
 		/obj/item/gun/energy/particle/small,
@@ -276,11 +274,24 @@
 		/obj/item/stack/medical/resin,
 		/obj/item/chems/food/drinks/cans/waterbottle/ascent
 	)
+	sprite_sheets = list(
+		BODYTYPE_MANTID_LARGE = 'mods/species/ascent/icons/rig/rig_chest_gyne.dmi',
+		BODYTYPE_SNAKE = 'mods/species/ascent/icons/rig/rig_chest_serpentid.dmi'
+	)
 
 /obj/item/clothing/shoes/magboots/rig/mantid
+	icon = 'mods/species/ascent/icons/rig/rig_boots.dmi'
 	desc = "It's like a highly advanced forklift."
 	bodytype_restricted = list(BODYTYPE_MANTID_LARGE, BODYTYPE_MANTID_SMALL)
+	sprite_sheets = list(
+		BODYTYPE_MANTID_LARGE = 'mods/species/ascent/icons/rig/rig_boots_gyne.dmi'
+	)
 
 /obj/item/clothing/gloves/rig/mantid
+	icon = 'mods/species/ascent/icons/rig/rig_gloves.dmi'
 	desc = "They look like a cross between a can opener and a Swiss army knife the size of a shoebox."
-	bodytype_restricted = list(BODYTYPE_MANTID_LARGE, BODYTYPE_MANTID_SMALL)
+	bodytype_restricted = list(BODYTYPE_MANTID_LARGE, BODYTYPE_MANTID_SMALL, BODYTYPE_SNAKE)
+	sprite_sheets = list(
+		BODYTYPE_MANTID_LARGE = 'mods/species/ascent/icons/rig/rig_gloves_gyne.dmi',
+		BODYTYPE_SNAKE = 'mods/species/ascent/icons/rig/rig_gloves_serpentid.dmi'
+	)
